@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Users · A2 Revenue OS{% endblock %}
+{% block content %}
+<h1>👥 Users</h1>
+
+<div class="card" style="margin-bottom:1rem">
+  <h2>Add user</h2>
+  <form method="post" class="form-grid">
+    <input type="hidden" name="action" value="create">
+    <div class="field"><label>Name</label><input name="name"></div>
+    <div class="field"><label>Email *</label><input type="email" name="email" required></div>
+    <div class="field"><label>Password *</label><input type="text" name="password" required></div>
+    <div class="field"><label>Role</label><select name="role"><option value="user">User</option><option value="admin">Admin</option></select></div>
+    <div class="field"><label>Telegram user ID</label><input name="telegram_user_id" inputmode="numeric" placeholder="optional"></div>
+    <div class="field" style="display:flex;align-items:flex-end"><button class="btn" type="submit">Create user</button></div>
+  </form>
+</div>
+
+<div class="card">
+  <h2>All users</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Name / email</th><th>Role</th><th>Telegram ID</th><th>Active</th><th>Edit</th></tr></thead>
+      <tbody>
+      {% for u in users %}
+        <tr>
+          <td>
+            <details>
+              <summary><strong>{{ u.name or '—' }}</strong> · {{ u.email }}</summary>
+              <form method="post" style="margin-top:.6rem">
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="user_id" value="{{ u.id }}">
+                <div class="form-grid">
+                  <div class="field"><label>Name</label><input name="name" value="{{ u.name }}"></div>
+                  <div class="field"><label>Role</label><select name="role"><option value="user" {{ 'selected' if u.role=='user' }}>User</option><option value="admin" {{ 'selected' if u.role=='admin' }}>Admin</option></select></div>
+                  <div class="field"><label>Telegram ID</label><input name="telegram_user_id" value="{{ u.telegram_user_id or '' }}"></div>
+                  <div class="field"><label>New password</label><input type="text" name="password" placeholder="leave blank to keep"></div>
+                </div>
+                <div class="checkbox-row"><input type="checkbox" id="active{{ u.id }}" name="is_active" value="1" {{ 'checked' if u.is_active }}><label for="active{{ u.id }}">Active</label></div>
+                <div class="actions" style="margin-top:.6rem"><button class="btn btn-sm" type="submit">Save</button></div>
+              </form>
+            </details>
+          </td>
+          <td><span class="badge {{ 'badge-Won' if u.is_admin else 'badge-New' }}">{{ u.role }}</span></td>
+          <td>{{ u.telegram_user_id or '—' }}</td>
+          <td>{{ '✓' if u.is_active else '—' }}</td>
+          <td class="muted">{{ u.created_at|localdt('%d %b %y') }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

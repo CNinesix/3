@@ -1,0 +1,21 @@
+[Unit]
+Description=A2 Revenue OS - Web dashboard (gunicorn)
+After=network.target
+
+[Service]
+Type=simple
+User=a2ros
+Group=a2ros
+WorkingDirectory=/opt/a2ros
+EnvironmentFile=/opt/a2ros/.env
+ExecStart=/opt/a2ros/.venv/bin/gunicorn -c gunicorn.conf.py wsgi:app
+Restart=always
+RestartSec=3
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ReadWritePaths=/var/lib/a2ros /opt/a2ros
+
+[Install]
+WantedBy=multi-user.target

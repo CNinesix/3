@@ -1,0 +1,20 @@
+[Unit]
+Description=A2 Revenue OS - Telegram bot worker (polling + scheduler)
+After=network.target a2ros-web.service
+
+[Service]
+Type=simple
+User=a2ros
+Group=a2ros
+WorkingDirectory=/opt/a2ros
+EnvironmentFile=/opt/a2ros/.env
+ExecStart=/opt/a2ros/.venv/bin/python run_bot.py
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ReadWritePaths=/var/lib/a2ros /opt/a2ros
+
+[Install]
+WantedBy=multi-user.target

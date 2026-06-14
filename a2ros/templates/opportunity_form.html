@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ 'New opportunity' if new else 'Edit opportunity' }} · A2 Revenue OS{% endblock %}
+{% block content %}
+<h1>{{ 'New opportunity' if new else 'Edit opportunity' }}</h1>
+<div class="card" style="max-width:760px">
+  <form method="post">
+    <div class="field">
+      <label>Account *</label>
+      <select name="account_id" required {{ 'disabled' if not new }}>
+        {% for a in accounts %}
+          <option value="{{ a.id }}" {{ 'selected' if opp.account_id == a.id }}>{{ a.name }}</option>
+        {% endfor %}
+      </select>
+      {% if not new %}<input type="hidden" name="account_id" value="{{ opp.account_id }}">{% endif %}
+    </div>
+    <div class="field"><label>Title *</label><input name="title" value="{{ opp.title or '' }}" required placeholder="CCTV upgrade — 64 cameras"></div>
+    <div class="form-grid">
+      <div class="field"><label>Stage</label>
+        <select name="stage">{% for s in stages %}<option value="{{ s }}" {{ 'selected' if opp.stage == s }}>{{ s }}</option>{% endfor %}</select>
+      </div>
+      <div class="field"><label>Value (RM)</label><input name="value" value="{{ opp.value or '' }}" inputmode="decimal"></div>
+    </div>
+    <div class="form-grid">
+      <div class="field"><label>Probability (%)</label><input name="probability" type="number" min="0" max="100" value="{{ opp.probability or 0 }}"></div>
+      <div class="field"><label>Expected close date</label><input name="expected_close_date" type="date" value="{{ opp.expected_close_date.strftime('%Y-%m-%d') if opp.expected_close_date else '' }}"></div>
+    </div>
+    <div class="field"><label>Description</label><textarea name="description">{{ opp.description or '' }}</textarea></div>
+    <div class="checkbox-row"><input type="checkbox" id="is_hot" name="is_hot" value="1" {{ 'checked' if opp.is_hot }}><label for="is_hot">🔥 Mark as hot opportunity</label></div>
+    <div class="actions" style="margin-top:1rem">
+      <button class="btn" type="submit">{{ 'Create' if new else 'Save changes' }}</button>
+      <a class="btn btn-outline" href="{{ url_for('web.opportunities') }}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

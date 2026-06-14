@@ -1,0 +1,38 @@
+# ============================================================
+# A2 Revenue OS — Docker Compose
+# Web dashboard + Telegram bot worker share one SQLite volume.
+# 1) cp .env.example .env  &&  edit values (set APP_HOST=0.0.0.0 for containers)
+# 2) docker compose up -d --build
+# 3) docker compose exec web python manage.py init-db
+# 4) (optional) docker compose exec web python manage.py seed
+# Put Nginx + TLS in front of port 8000 (see deploy/nginx + deploy/SSL.md).
+# ============================================================
+services:
+  web:
+    build: .
+    command: gunicorn -c gunicorn.conf.py wsgi:app
+    env_file: .env
+    environment:
+      - APP_HOST=0.0.0.0
+      - DATABASE_URL=sqlite:////data/a2ros.db
+    volumes:
+      - a2ros-data:/data
+      - ./backups:/app/backups
+    ports:
+      - "127.0.0.1:8000:8000"
+    restart: unless-stopped
+
+  bot:
+    build: .
+    command: python run_bot.py
+    env_file: .env
+    environment:
+      - DATABASE_URL=sqlite:////data/a2ros.db
+    volumes:
+      - a2ros-data:/data
+    depends_on:
+      - web
+    restart: unless-stopped
+
+volumes:
+  a2ros-data:

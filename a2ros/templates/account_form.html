@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{{ 'New account' if new else 'Edit account' }} · A2 Revenue OS{% endblock %}
+{% block content %}
+<h1>{{ 'New account' if new else 'Edit ' + account.name }}</h1>
+<div class="card" style="max-width:760px">
+  <form method="post">
+    <div class="field"><label>Company name *</label><input name="name" value="{{ account.name or '' }}" required></div>
+    <div class="form-grid">
+      <div class="field"><label>Industry / segment</label><input name="industry" value="{{ account.industry or '' }}" placeholder="Data Centre, Manufacturer…"></div>
+      <div class="field"><label>Zone</label><input name="zone" value="{{ account.zone or '' }}" placeholder="Iskandar Puteri, Senai…"></div>
+    </div>
+    <div class="field"><label>Location / address</label><input name="location" value="{{ account.location or '' }}"></div>
+    <div class="form-grid">
+      <div class="field"><label>Contact name</label><input name="contact_name" value="{{ account.contact_name or '' }}"></div>
+      <div class="field"><label>Contact phone</label><input name="contact_phone" value="{{ account.contact_phone or '' }}"></div>
+    </div>
+    <div class="field"><label>Contact email</label><input type="email" name="contact_email" value="{{ account.contact_email or '' }}"></div>
+    <div class="field"><label>Notes</label><textarea name="notes">{{ account.notes or '' }}</textarea></div>
+    <div class="actions">
+      <button class="btn" type="submit">{{ 'Create account' if new else 'Save changes' }}</button>
+      <a class="btn btn-outline" href="{{ url_for('web.accounts') }}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
