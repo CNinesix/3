@@ -8,17 +8,18 @@ A complete, web-based PDF toolkit you run on your own Proxmox box. It bundles:
   50+ tools for editing, organizing, converting and **securing** PDFs, all
   running locally so your files never leave the server.
 
-Everything runs as Docker containers, orchestrated with Docker Compose.
+Everything runs as Docker containers, orchestrated with Docker Compose, and is
+published at **https://pdf.snmk.xyz** through Cloudflare.
 
 ```
-Browser ──HTTPS──> Caddy (pdf.snmk.xyz, :80/:443)
-                     └─> gateway (login + dashboard) ──> Stirling-PDF (private)
+You ──HTTPS──> Cloudflare (pdf.snmk.xyz)
+                  ⇡ outbound-only tunnel (no port-forward needed)
+            cloudflared ──> gateway :8088 (login + dashboard) ──> Stirling-PDF
 ```
 
-**Caddy** is the only thing published; it terminates HTTPS for **pdf.snmk.xyz**
-with an automatic Let's Encrypt certificate. The gateway and Stirling-PDF stay on
-the internal Docker network — every request enters via HTTPS and must pass the
-login first.
+The gateway is published on the host at port **8088**, so Cloudflare's origin is
+`http://<host-LAN-IP>:8088`. Add a **Cloudflare Access** policy to limit entry to
+your email, and the gateway's `pdf`/`1` login is a second layer behind it.
 
 ---
 
@@ -53,27 +54,42 @@ complete Stirling-PDF interface with every feature.
 
 ---
 
-## Domain & HTTPS (pdf.snmk.xyz)
+## Publish pdf.snmk.xyz with Cloudflare
 
-The stack serves **https://pdf.snmk.xyz** out of the box via Caddy. To make it
-work:
+> **What "local IP" goes into Cloudflare?** The LAN IP of the container/VM
+> running this stack. Find it by running this **on that machine**:
+> ```bash
+> hostname -I | awk '{print $1}'
+> ```
+> It looks like `192.168.x.x` or `10.x.x.x`. Use it as `http://<that-ip>:8088`.
 
-1. **DNS** — create an `A` record for `pdf.snmk.xyz` pointing at the public IP of
-   the host running this stack (add an `AAAA` record too if you have IPv6).
-2. **Ports** — make sure inbound **TCP 80 and 443** reach this host. If the
-   Proxmox box is behind a home router, port-forward 80 and 443 to the
-   container/VM's LAN IP. Port 80 is required for the Let's Encrypt challenge.
-3. Start the stack (below). Caddy automatically requests and renews the TLS
-   certificate; the first request may take a few seconds while the cert is
-   issued.
+### Recommended — Cloudflare Tunnel (no port-forwarding, works behind NAT)
 
-Change the domain or ACME email in `.env` (`DOMAIN`, `ACME_EMAIL`).
+1. Cloudflare **Zero Trust → Networks → Tunnels → Create a tunnel** → name it,
+   choose **Docker**, and copy the tunnel **token** (`eyJ...`).
+2. Put the token in `.env` as `TUNNEL_TOKEN=...` and run the stack — the bundled
+   `cloudflared` container connects automatically.
+3. In the tunnel, **add a Public Hostname**:
+   - **Subdomain:** `pdf`  **Domain:** `snmk.xyz`
+   - **Service:** `HTTP` → **URL:** `gateway:3000`
+     *(cloudflared is in the same compose network, so it reaches the gateway by
+     name — no IP needed. If you instead run cloudflared elsewhere on your LAN,
+     use `http://<host-LAN-IP>:8088`.)*
+4. Cloudflare auto-creates the DNS record. Done — `https://pdf.snmk.xyz` is live.
 
-> **Internal-only / no public ports?** Let's Encrypt's HTTP challenge needs port
-> 80 reachable. If you can't expose it, either use Caddy's DNS-01 challenge
-> (requires a Caddy build with your DNS provider's plugin) or replace the
-> `{$DOMAIN}` block in `caddy/Caddyfile` with `tls internal` for a self-signed
-> cert. Ask and I can wire either up.
+### Alternative — plain DNS A record (needs a public IP + port-forward)
+
+Cloudflare DNS records must point at a **public** IP, *not* a local one. If you
+have a static public IP: create an `A` record `pdf` → your public IP
+(`curl ifconfig.me`), port-forward `8088` (or `80/443` via your own reverse
+proxy) to the container, and proxy through Cloudflare. The Tunnel above avoids
+all of this.
+
+### Lock access to only you
+
+Cloudflare **Zero Trust → Access → Applications → Add a self-hosted app** for
+`pdf.snmk.xyz`, with a policy that **allows only `cninesix@gmail.com`**.
+Cloudflare then requires your login before anyone reaches the site.
 
 ## Deploy on Proxmox
 
@@ -103,11 +119,12 @@ bash deploy/install.sh
 ### Option C — manual
 
 ```bash
-cp .env.example .env       # edit credentials + SESSION_SECRET + DOMAIN
+cp .env.example .env       # set SESSION_SECRET + TUNNEL_TOKEN (+ credentials)
 docker compose up -d --build
 ```
 
-Then open **https://pdf.snmk.xyz** (once DNS and ports 80/443 are in place).
+On the LAN it's reachable at `http://<host-LAN-IP>:8088`; publicly at
+**https://pdf.snmk.xyz** once the Cloudflare Tunnel/DNS is configured above.
 
 ---
 
@@ -121,10 +138,11 @@ Edit `.env` (copied from `.env.example`):
 | `GATEWAY_PASS`   | `1`                        | Login password (decoy hint aside)         |
 | `SESSION_SECRET` | `please-change-this-secret`| Cookie signing key — **change this**      |
 | `SITE_TITLE`     | `PDF Studio`               | Branding text                             |
-| `DOMAIN`         | `pdf.snmk.xyz`             | Public hostname Caddy serves over HTTPS   |
-| `ACME_EMAIL`     | _(empty)_                  | Let's Encrypt contact email (optional)    |
+| `TUNNEL_TOKEN`   | _(required)_               | Cloudflare Tunnel token (`eyJ...`)        |
 
 Generate a strong secret: `openssl rand -hex 32`.
+
+Change the LAN port by editing the `8088:3000` mapping in `docker-compose.yml`.
 
 ---
 
@@ -144,10 +162,13 @@ volumes, so it survives restarts and updates.
 
 ## Security notes
 
-- Traffic is served over **HTTPS** by Caddy with an auto-renewing Let's Encrypt
-  certificate, and session cookies are flagged `Secure`/`HttpOnly`. Only ports
-  80/443 (Caddy) are exposed; the gateway and Stirling stay on the internal
-  network.
+- Public traffic is served over **HTTPS by Cloudflare**; `cloudflared` dials out,
+  so no inbound ports are open to the internet. Session cookies are flagged
+  `Secure`/`HttpOnly`. Stirling-PDF stays on the internal network.
+- The gateway's `8088` port is on your **LAN** only — don't port-forward it to
+  the internet; reach the public site through Cloudflare instead.
+- Restrict access with a **Cloudflare Access** policy (only your email) so it
+  isn't open to the public.
 - Always change `SESSION_SECRET` from the default.
 - The single-user login is intended for a private home lab. For multi-user setups
   with real accounts, enable Stirling-PDF's own login system instead.

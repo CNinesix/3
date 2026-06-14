@@ -1,11 +1,13 @@
-# PDF Editing & Security Suite — Proxmox stack
+# PDF Editing & Security Suite — Proxmox stack (private, via Cloudflare Tunnel)
 #
-#   caddy    -> public entry point: HTTPS for pdf.snmk.xyz (auto Let's Encrypt)
-#   gateway  -> branded login + dashboard, reverse-proxies into Stirling-PDF
-#   stirling -> the actual PDF engine (edit / convert / security tools)
+#   cloudflared -> outbound-only tunnel to Cloudflare; serves pdf.snmk.xyz
+#   gateway     -> branded login + dashboard, reverse-proxies into Stirling-PDF
+#   stirling    -> the actual PDF engine (edit / convert / security tools)
 #
-# Only Caddy is published. The gateway and Stirling-PDF stay private on the
-# internal network, so every request enters via HTTPS and passes the login.
+# NOTHING publishes a host port. The only path in is the Cloudflare Tunnel,
+# which dials OUT to Cloudflare — so the suite is never exposed to the public
+# internet and needs no public IP / port-forwarding. Restrict who can reach it
+# with a Cloudflare Access policy (see README) so only you can log in.
 
 services:
   stirling:
@@ -37,9 +39,10 @@ services:
     build: ./gateway
     container_name: pdfsuite-gateway
     restart: unless-stopped
-    # No public port — reachable only through Caddy on the internal network.
-    expose:
-      - "3000"
+    # Published on the LAN so Cloudflare Tunnel (or a reverse proxy) can use
+    # http://<this-host-LAN-IP>:8088 as the origin.
+    ports:
+      - "8088:3000"
     environment:
       PORT: "3000"
       STIRLING_URL: "http://stirling:8080"
@@ -52,21 +55,15 @@ services:
     networks:
       - pdfnet
 
-  caddy:
-    image: caddy:2-alpine
-    container_name: pdfsuite-caddy
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: pdfsuite-cloudflared
     restart: unless-stopped
-    ports:
-      - "80:80"      # HTTP -> auto-redirects to HTTPS / ACME challenge
-      - "443:443"    # HTTPS for pdf.snmk.xyz
-      - "443:443/udp"  # HTTP/3
+    # Outbound-only connection to Cloudflare. No ports are published.
+    command: tunnel --no-autoupdate run
     environment:
-      DOMAIN: "${DOMAIN:-pdf.snmk.xyz}"
-      ACME_EMAIL: "${ACME_EMAIL:-}"
-    volumes:
-      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data      # certificates (persist across restarts)
-      - caddy_config:/config
+      # Token from: Cloudflare Zero Trust > Networks > Tunnels > (your tunnel).
+      TUNNEL_TOKEN: "${TUNNEL_TOKEN:?set TUNNEL_TOKEN in .env}"
     depends_on:
       - gateway
     networks:
@@ -80,5 +77,3 @@ volumes:
   stirling_tessdata:
   stirling_configs:
   stirling_logs:
-  caddy_data:
-  caddy_config:
