@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Dashboard · PDF Studio</title>
+  <style>
+    :root {
+      --bg:#0b1020; --card:#141b2e; --muted:#8b95ad; --text:#eef2ff;
+      --accent:#5b8cff; --accent-2:#7c5cff; --line:#243049;
+    }
+    * { box-sizing:border-box; }
+    body {
+      margin:0; color:var(--text);
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      background:
+        radial-gradient(1100px 600px at 10% -10%, rgba(124,92,255,.18), transparent 60%),
+        radial-gradient(900px 500px at 110% 0%, rgba(91,140,255,.16), transparent 55%),
+        var(--bg);
+      min-height:100vh;
+    }
+    header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 26px; border-bottom:1px solid var(--line);
+      background:rgba(10,14,28,.65); backdrop-filter:blur(8px);
+      position:sticky; top:0; z-index:10;
+    }
+    .brand { display:flex; align-items:center; gap:12px; }
+    .logo {
+      width:38px; height:38px; border-radius:10px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      display:grid; place-items:center; font-weight:800; font-size:13px; color:#fff;
+    }
+    .brand h1 { font-size:16px; margin:0; }
+    .brand p { font-size:11.5px; margin:1px 0 0; color:var(--muted); }
+    .actions { display:flex; gap:10px; align-items:center; }
+    .btn {
+      text-decoration:none; font-size:13.5px; font-weight:600; cursor:pointer;
+      padding:9px 15px; border-radius:10px; border:1px solid var(--line);
+      color:var(--text); background:#0e1426;
+    }
+    .btn.primary {
+      border:0; color:#fff;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      box-shadow:0 8px 20px rgba(91,140,255,.3);
+    }
+    main { max-width:1100px; margin:0 auto; padding:34px 26px 60px; }
+    .hero { margin-bottom:30px; }
+    .hero h2 { font-size:26px; margin:0 0 6px; }
+    .hero p { color:var(--muted); margin:0; font-size:14.5px; }
+    .section-title {
+      font-size:13px; text-transform:uppercase; letter-spacing:1.2px;
+      color:var(--muted); margin:30px 0 14px;
+    }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px; }
+    .tool {
+      display:block; text-decoration:none; color:var(--text);
+      background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,0)),var(--card);
+      border:1px solid var(--line); border-radius:14px; padding:16px;
+      transition:transform .08s ease, border-color .15s, box-shadow .15s;
+    }
+    .tool:hover {
+      transform:translateY(-2px); border-color:var(--accent);
+      box-shadow:0 14px 34px rgba(0,0,0,.4);
+    }
+    .ico {
+      width:40px; height:40px; border-radius:10px; display:grid; place-items:center;
+      font-size:20px; margin-bottom:11px; background:#0e1426; border:1px solid var(--line);
+    }
+    .tool h3 { font-size:15px; margin:0 0 4px; }
+    .tool p { font-size:12.5px; color:var(--muted); margin:0; line-height:1.45; }
+    footer { text-align:center; color:var(--muted); font-size:11.5px; padding:24px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">PDF</div>
+      <div>
+        <h1>PDF Studio</h1>
+        <p>Self-hosted PDF editing &amp; security</p>
+      </div>
+    </div>
+    <div class="actions">
+      <a class="btn primary" href="/">Open full toolbox</a>
+      <a class="btn" href="/_auth/logout">Sign out</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h2>What do you want to do today?</h2>
+      <p>Pick a tool below, or open the full toolbox for every feature. All processing happens on your own server.</p>
+    </section>
+
+    <div class="section-title">Edit &amp; Organize</div>
+    <div class="grid">
+      <a class="tool" href="/merge-pdfs"><div class="ico">🧩</div><h3>Merge PDFs</h3><p>Combine multiple PDFs into one document.</p></a>
+      <a class="tool" href="/split-pdfs"><div class="ico">✂️</div><h3>Split PDF</h3><p>Break a PDF into separate files by page.</p></a>
+      <a class="tool" href="/pdf-organizer"><div class="ico">🗂️</div><h3>Organize Pages</h3><p>Reorder, duplicate or delete pages visually.</p></a>
+      <a class="tool" href="/rotate-pdf"><div class="ico">🔄</div><h3>Rotate</h3><p>Rotate pages to the correct orientation.</p></a>
+      <a class="tool" href="/remove-pages"><div class="ico">🧽</div><h3>Remove Pages</h3><p>Delete unwanted pages from a document.</p></a>
+      <a class="tool" href="/compress-pdf"><div class="ico">🪶</div><h3>Compress</h3><p>Shrink file size while keeping quality.</p></a>
+    </div>
+
+    <div class="section-title">Convert</div>
+    <div class="grid">
+      <a class="tool" href="/img-to-pdf"><div class="ico">🖼️</div><h3>Image → PDF</h3><p>Turn JPG / PNG images into a PDF.</p></a>
+      <a class="tool" href="/pdf-to-img"><div class="ico">📸</div><h3>PDF → Image</h3><p>Export pages as image files.</p></a>
+      <a class="tool" href="/file-to-pdf"><div class="ico">📄</div><h3>Office → PDF</h3><p>Convert Word, Excel, PowerPoint to PDF.</p></a>
+      <a class="tool" href="/ocr-pdf"><div class="ico">🔎</div><h3>OCR</h3><p>Make scanned PDFs searchable &amp; selectable.</p></a>
+    </div>
+
+    <div class="section-title">Security &amp; Protection</div>
+    <div class="grid">
+      <a class="tool" href="/add-password"><div class="ico">🔒</div><h3>Encrypt / Password</h3><p>Add a password to lock a PDF.</p></a>
+      <a class="tool" href="/remove-password"><div class="ico">🔓</div><h3>Decrypt</h3><p>Remove a known password from a PDF.</p></a>
+      <a class="tool" href="/change-permissions"><div class="ico">🛂</div><h3>Permissions</h3><p>Restrict printing, copying and editing.</p></a>
+      <a class="tool" href="/add-watermark"><div class="ico">💧</div><h3>Watermark</h3><p>Stamp text or image watermarks.</p></a>
+      <a class="tool" href="/sanitize-pdf"><div class="ico">🧼</div><h3>Sanitize</h3><p>Strip scripts, metadata &amp; hidden data.</p></a>
+      <a class="tool" href="/redact"><div class="ico">⬛</div><h3>Redact</h3><p>Black out sensitive content permanently.</p></a>
+      <a class="tool" href="/sign"><div class="ico">✍️</div><h3>Sign</h3><p>Add a digital or drawn signature.</p></a>
+      <a class="tool" href="/get-info-on-pdf"><div class="ico">📊</div><h3>Inspect</h3><p>View metadata &amp; security details.</p></a>
+    </div>
+  </main>
+
+  <footer>PDF Studio · powered by Stirling-PDF · running on your Proxmox host</footer>
+</body>
+</html>

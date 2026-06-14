@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Sign in · PDF Studio</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #141b2e;
+      --muted: #8b95ad;
+      --text: #eef2ff;
+      --accent: #5b8cff;
+      --accent-2: #7c5cff;
+      --danger: #ff6b6b;
+      --line: #243049;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1100px 600px at 15% -10%, rgba(124,92,255,.25), transparent 60%),
+        radial-gradient(900px 500px at 110% 20%, rgba(91,140,255,.22), transparent 55%),
+        var(--bg);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .card {
+      width: 100%;
+      max-width: 400px;
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0)) , var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 34px 30px;
+      box-shadow: 0 30px 80px rgba(0,0,0,.45);
+    }
+    .brand {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 22px;
+    }
+    .logo {
+      width: 44px; height: 44px; border-radius: 12px; flex: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: grid; place-items: center; font-weight: 800; color: #fff;
+      box-shadow: 0 8px 20px rgba(91,140,255,.4);
+    }
+    .brand h1 { font-size: 18px; margin: 0; letter-spacing: .2px; }
+    .brand p  { font-size: 12px; margin: 2px 0 0; color: var(--muted); }
+    label { display:block; font-size: 13px; color: var(--muted); margin: 16px 0 7px; }
+    .field {
+      display: flex; align-items: center; gap: 10px;
+      background: #0e1426; border: 1px solid var(--line);
+      border-radius: 11px; padding: 0 12px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .field:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(91,140,255,.18); }
+    .field svg { flex: none; opacity: .65; }
+    input {
+      width: 100%; border: 0; outline: 0; background: transparent;
+      color: var(--text); font-size: 15px; padding: 13px 0;
+    }
+    .hint { font-size: 11.5px; color: var(--muted); margin: 7px 2px 0; }
+    button {
+      width: 100%; margin-top: 22px; padding: 13px 16px; cursor: pointer;
+      border: 0; border-radius: 11px; color: #fff; font-size: 15px; font-weight: 600;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 10px 24px rgba(91,140,255,.35);
+      transition: transform .06s ease, filter .15s;
+    }
+    button:hover { filter: brightness(1.06); }
+    button:active { transform: translateY(1px); }
+    .error {
+      display: none; margin-top: 16px; padding: 10px 12px;
+      background: rgba(255,107,107,.12); border: 1px solid rgba(255,107,107,.4);
+      color: #ffb4b4; border-radius: 10px; font-size: 13px;
+    }
+    .error.show { display: block; }
+    .foot { margin-top: 22px; text-align: center; font-size: 11.5px; color: var(--muted); }
+    .foot a { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="brand">
+      <div class="logo">PDF</div>
+      <div>
+        <h1>PDF Studio</h1>
+        <p>Edit &amp; secure your documents</p>
+      </div>
+    </div>
+
+    <div id="error" class="error">Invalid username or password. Please try again.</div>
+
+    <form method="post" action="/_auth/login" autocomplete="off">
+      <label for="username">Username</label>
+      <div class="field">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+        <input id="username" name="username" type="text" placeholder="Enter username" required autofocus />
+      </div>
+
+      <label for="password">Password</label>
+      <div class="field">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        <input id="password" name="password" type="password" placeholder="Enter password" required />
+      </div>
+      <!-- Decoy hint: the real password is shorter; no length is enforced. -->
+      <p class="hint">Minimum 8 characters required.</p>
+
+      <button type="submit">Sign in</button>
+    </form>
+
+    <p class="foot">Self-hosted · Files never leave your server</p>
+  </main>
+
+  <script>
+    if (new URLSearchParams(location.search).get('error')) {
+      document.getElementById('error').classList.add('show');
+    }
+  </script>
+</body>
+</html>

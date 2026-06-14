@@ -1,0 +1,60 @@
+# PDF Editing & Security Suite — Proxmox stack
+#
+#   gateway  -> branded login + dashboard, reverse-proxies into Stirling-PDF
+#   stirling -> the actual PDF engine (edit / convert / security tools)
+#
+# Only the gateway is published to the LAN. Stirling-PDF is reachable only
+# through the gateway, so every request must pass the login first.
+
+services:
+  stirling:
+    image: stirlingtools/stirling-pdf:latest
+    container_name: pdfsuite-stirling
+    restart: unless-stopped
+    # NOTE: no "ports:" on purpose — Stirling is private, behind the gateway.
+    expose:
+      - "8080"
+    environment:
+      DOCKER_ENABLE_SECURITY: "false"   # gateway handles auth, not Stirling
+      SYSTEM_DEFAULTLOCALE: "en-US"
+      LANGS: "en_GB"
+      SYSTEM_MAXFILESIZE: "200"          # MB upload limit
+    volumes:
+      - stirling_tessdata:/usr/share/tessdata   # OCR language packs
+      - stirling_configs:/configs
+      - stirling_logs:/logs
+    networks:
+      - pdfnet
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  gateway:
+    build: ./gateway
+    container_name: pdfsuite-gateway
+    restart: unless-stopped
+    ports:
+      - "8088:3000"        # open http://<proxmox-lan-ip>:8088 in a browser
+    environment:
+      PORT: "3000"
+      STIRLING_URL: "http://stirling:8080"
+      GATEWAY_USER: "${GATEWAY_USER:-pdf}"
+      GATEWAY_PASS: "${GATEWAY_PASS:-1}"
+      SESSION_SECRET: "${SESSION_SECRET:-please-change-this-secret}"
+      SITE_TITLE: "${SITE_TITLE:-PDF Studio}"
+    depends_on:
+      - stirling
+    networks:
+      - pdfnet
+
+networks:
+  pdfnet:
+    driver: bridge
+
+volumes:
+  stirling_tessdata:
+  stirling_configs:
+  stirling_logs:

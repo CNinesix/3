@@ -1,0 +1,15 @@
+{
+  "name": "pdfsuite-gateway",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Branded login + dashboard gateway in front of Stirling-PDF",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "http-proxy-middleware": "^2.0.6"
+  }
+}
