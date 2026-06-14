@@ -14,11 +14,11 @@ published at **https://pdf.snmk.xyz** through Cloudflare.
 ```
 You ──HTTPS──> Cloudflare (pdf.snmk.xyz)
                   ⇡ outbound-only tunnel (no port-forward needed)
-            cloudflared ──> gateway :8088 (login + dashboard) ──> Stirling-PDF
+            cloudflared ──> gateway :9932 (login + dashboard) ──> Stirling-PDF
 ```
 
-The gateway is published on the host at port **8088**, so Cloudflare's origin is
-`http://<host-LAN-IP>:8088`. Add a **Cloudflare Access** policy to limit entry to
+The gateway is published on the host at port **9932**, so Cloudflare's origin is
+`http://<host-LAN-IP>:9932`. Add a **Cloudflare Access** policy to limit entry to
 your email, and the gateway's `pdf`/`1` login is a second layer behind it.
 
 ---
@@ -61,7 +61,7 @@ complete Stirling-PDF interface with every feature.
 > ```bash
 > hostname -I | awk '{print $1}'
 > ```
-> It looks like `192.168.x.x` or `10.x.x.x`. Use it as `http://<that-ip>:8088`.
+> It looks like `192.168.x.x` or `10.x.x.x`. Use it as `http://<that-ip>:9932`.
 
 ### Recommended — Cloudflare Tunnel (no port-forwarding, works behind NAT)
 
@@ -74,14 +74,14 @@ complete Stirling-PDF interface with every feature.
    - **Service:** `HTTP` → **URL:** `gateway:3000`
      *(cloudflared is in the same compose network, so it reaches the gateway by
      name — no IP needed. If you instead run cloudflared elsewhere on your LAN,
-     use `http://<host-LAN-IP>:8088`.)*
+     use `http://<host-LAN-IP>:9932`.)*
 4. Cloudflare auto-creates the DNS record. Done — `https://pdf.snmk.xyz` is live.
 
 ### Alternative — plain DNS A record (needs a public IP + port-forward)
 
 Cloudflare DNS records must point at a **public** IP, *not* a local one. If you
 have a static public IP: create an `A` record `pdf` → your public IP
-(`curl ifconfig.me`), port-forward `8088` (or `80/443` via your own reverse
+(`curl ifconfig.me`), port-forward `9932` (or `80/443` via your own reverse
 proxy) to the container, and proxy through Cloudflare. The Tunnel above avoids
 all of this.
 
@@ -123,7 +123,7 @@ cp .env.example .env       # set SESSION_SECRET + TUNNEL_TOKEN (+ credentials)
 docker compose up -d --build
 ```
 
-On the LAN it's reachable at `http://<host-LAN-IP>:8088`; publicly at
+On the LAN it's reachable at `http://<host-LAN-IP>:9932`; publicly at
 **https://pdf.snmk.xyz** once the Cloudflare Tunnel/DNS is configured above.
 
 ---
@@ -142,7 +142,7 @@ Edit `.env` (copied from `.env.example`):
 
 Generate a strong secret: `openssl rand -hex 32`.
 
-Change the LAN port by editing the `8088:3000` mapping in `docker-compose.yml`.
+Change the LAN port by editing the `9932:3000` mapping in `docker-compose.yml`.
 
 ---
 
@@ -165,7 +165,7 @@ volumes, so it survives restarts and updates.
 - Public traffic is served over **HTTPS by Cloudflare**; `cloudflared` dials out,
   so no inbound ports are open to the internet. Session cookies are flagged
   `Secure`/`HttpOnly`. Stirling-PDF stays on the internal network.
-- The gateway's `8088` port is on your **LAN** only — don't port-forward it to
+- The gateway's `9932` port is on your **LAN** only — don't port-forward it to
   the internet; reach the public site through Cloudflare instead.
 - Restrict access with a **Cloudflare Access** policy (only your email) so it
   isn't open to the public.

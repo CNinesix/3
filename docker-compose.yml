@@ -40,9 +40,9 @@ services:
     container_name: pdfsuite-gateway
     restart: unless-stopped
     # Published on the LAN so Cloudflare Tunnel (or a reverse proxy) can use
-    # http://<this-host-LAN-IP>:8088 as the origin.
+    # http://<this-host-LAN-IP>:9932 as the origin.
     ports:
-      - "8088:3000"
+      - "9932:3000"
     environment:
       PORT: "3000"
       STIRLING_URL: "http://stirling:8080"
