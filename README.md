@@ -67,8 +67,11 @@ complete Stirling-PDF interface with every feature.
 
 1. Cloudflare **Zero Trust → Networks → Tunnels → Create a tunnel** → name it,
    choose **Docker**, and copy the tunnel **token** (`eyJ...`).
-2. Put the token in `.env` as `TUNNEL_TOKEN=...` and run the stack — the bundled
-   `cloudflared` container connects automatically.
+2. Put the token in `.env` as `TUNNEL_TOKEN=...` and start the tunnel profile —
+   the bundled `cloudflared` container connects automatically:
+   ```bash
+   docker compose --profile tunnel up -d
+   ```
 3. In the tunnel, **add a Public Hostname**:
    - **Subdomain:** `pdf`  **Domain:** `snmk.xyz`
    - **Service:** `HTTP` → **URL:** `gateway:3000`
@@ -93,18 +96,24 @@ Cloudflare then requires your login before anyone reaches the site.
 
 ## Deploy on Proxmox
 
-### Option A — one shot from the Proxmox host (creates an LXC for you)
+### Option A — one command on the Proxmox host (creates an LXC for you)
 
-Run on the **Proxmox host** as root:
+Run this **on the Proxmox host** as root. It downloads the script, creates a
+Debian 12 LXC (Docker + nesting), clones this branch, and starts the stack —
+then prints the container's **local IP**:
 
 ```bash
-# get the project onto the host first (git clone or scp), then:
-REPO_URL="https://github.com/cninesix/3.git" bash deploy/proxmox-create-lxc.sh
+bash <(curl -fsSL https://raw.githubusercontent.com/CNinesix/3/claude/proxmox-pdf-editing-suite-5rxg9w/deploy/proxmox-create-lxc.sh)
 ```
 
-This creates a Debian 12 LXC (nesting enabled), installs Docker, clones the repo
-and starts the stack. Tweak `CTID`, `RAM_MB`, `STORAGE`, etc. at the top of the
-script or via environment variables. When it finishes it prints the URL.
+To also bring up the Cloudflare tunnel in the same step, pass your token:
+
+```bash
+TUNNEL_TOKEN="eyJ..." bash <(curl -fsSL https://raw.githubusercontent.com/CNinesix/3/claude/proxmox-pdf-editing-suite-5rxg9w/deploy/proxmox-create-lxc.sh)
+```
+
+Tweak `CTID`, `RAM_MB`, `STORAGE`, etc. via environment variables (see the top of
+the script).
 
 ### Option B — inside an existing LXC / VM
 
@@ -119,8 +128,9 @@ bash deploy/install.sh
 ### Option C — manual
 
 ```bash
-cp .env.example .env       # set SESSION_SECRET + TUNNEL_TOKEN (+ credentials)
-docker compose up -d --build
+cp .env.example .env                    # set SESSION_SECRET + TUNNEL_TOKEN
+docker compose up -d --build            # LAN only (http://<host-LAN-IP>:9932)
+docker compose --profile tunnel up -d   # + publish via Cloudflare (needs token)
 ```
 
 On the LAN it's reachable at `http://<host-LAN-IP>:9932`; publicly at

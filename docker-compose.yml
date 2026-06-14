@@ -59,11 +59,15 @@ services:
     image: cloudflare/cloudflared:latest
     container_name: pdfsuite-cloudflared
     restart: unless-stopped
+    # Only started when you opt in:  docker compose --profile tunnel up -d
+    # (so the stack runs on the LAN even before you have a Cloudflare token).
+    profiles: ["tunnel"]
     # Outbound-only connection to Cloudflare. No ports are published.
     command: tunnel --no-autoupdate run
     environment:
       # Token from: Cloudflare Zero Trust > Networks > Tunnels > (your tunnel).
-      TUNNEL_TOKEN: "${TUNNEL_TOKEN:?set TUNNEL_TOKEN in .env}"
+      # Required only when running the "tunnel" profile; set it in .env.
+      TUNNEL_TOKEN: "${TUNNEL_TOKEN:-}"
     depends_on:
       - gateway
     networks:

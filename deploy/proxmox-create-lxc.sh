@@ -19,7 +19,9 @@ STORAGE="${STORAGE:-local-lvm}"      # rootfs storage
 TPL_STORAGE="${TPL_STORAGE:-local}"  # where templates live
 PASSWORD="${PASSWORD:-changeme}"     # root password for the container
 TEMPLATE="debian-12-standard"
-REPO_URL="${REPO_URL:-}"             # optional: git URL of this repo to clone
+REPO_URL="${REPO_URL:-https://github.com/CNinesix/3.git}"   # repo to clone
+BRANCH="${BRANCH:-claude/proxmox-pdf-editing-suite-5rxg9w}" # branch with the code
+TUNNEL_TOKEN="${TUNNEL_TOKEN:-}"     # optional: Cloudflare Tunnel token
 # ---------------------------------------------------------------------------
 
 echo "==> Ensuring Debian 12 template is available"
@@ -61,24 +63,28 @@ pct exec "$CTID" -- bash -lc '
   systemctl enable --now docker
 '
 
-if [ -n "$REPO_URL" ]; then
-  echo "==> Cloning $REPO_URL inside the container and starting the stack"
-  pct exec "$CTID" -- bash -lc "
-    set -e
-    git clone '$REPO_URL' /opt/pdfsuite
-    cd /opt/pdfsuite
-    [ -f .env ] || cp .env.example .env
-    docker compose up -d --build
-  "
-else
-  echo "==> REPO_URL not set — copy this project into the container, then run:"
-  echo "      pct exec $CTID -- bash -lc 'cd /opt/pdfsuite && cp -n .env.example .env && docker compose up -d --build'"
-fi
+echo "==> Cloning $REPO_URL ($BRANCH) inside the container and starting the stack"
+pct exec "$CTID" -- bash -lc "
+  set -e
+  git clone -b '$BRANCH' '$REPO_URL' /opt/pdfsuite
+  cd /opt/pdfsuite
+  [ -f .env ] || cp .env.example .env
+  if [ -n '$TUNNEL_TOKEN' ]; then
+    sed -i 's|^TUNNEL_TOKEN=.*|TUNNEL_TOKEN=$TUNNEL_TOKEN|' .env
+    docker compose --profile tunnel up -d --build
+  else
+    docker compose up -d --build   # LAN only; add token + --profile tunnel later
+  fi
+"
 
 IP="$(pct exec "$CTID" -- bash -lc "hostname -I | awk '{print \$1}'" 2>/dev/null || true)"
 echo
 echo "==> Done."
 echo "    Container ID : $CTID"
 echo "    Container IP : ${IP:-<container-ip>}"
-echo "    Public URL   : https://pdf.snmk.xyz  (point DNS here; forward ports 80/443 to this host)"
-echo "    Login        : pdf / 1   (page shows a decoy 'minimum 8 characters')"
+echo "    LAN URL      : http://${IP:-<container-ip>}:9932   (login: pdf / 1)"
+echo "    Public URL   : https://pdf.snmk.xyz  (via Cloudflare Tunnel — set TUNNEL_TOKEN)"
+echo
+echo "    >> Your container's LOCAL IP is: ${IP:-<run hostname -I in the container>}"
+echo "    >> Use http://${IP:-<ip>}:9932 as the Cloudflare Tunnel Service URL,"
+echo "       or http://gateway:3000 if using the bundled cloudflared."
