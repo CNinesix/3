@@ -11,11 +11,14 @@ A complete, web-based PDF toolkit you run on your own Proxmox box. It bundles:
 Everything runs as Docker containers, orchestrated with Docker Compose.
 
 ```
-Browser ──> gateway (login + dashboard, :8088) ──> Stirling-PDF (private)
+Browser ──HTTPS──> Caddy (pdf.snmk.xyz, :80/:443)
+                     └─> gateway (login + dashboard) ──> Stirling-PDF (private)
 ```
 
-The gateway is the only thing exposed on your LAN. Stirling-PDF has no published
-port — every request must pass the login first.
+**Caddy** is the only thing published; it terminates HTTPS for **pdf.snmk.xyz**
+with an automatic Let's Encrypt certificate. The gateway and Stirling-PDF stay on
+the internal Docker network — every request enters via HTTPS and must pass the
+login first.
 
 ---
 
@@ -50,6 +53,28 @@ complete Stirling-PDF interface with every feature.
 
 ---
 
+## Domain & HTTPS (pdf.snmk.xyz)
+
+The stack serves **https://pdf.snmk.xyz** out of the box via Caddy. To make it
+work:
+
+1. **DNS** — create an `A` record for `pdf.snmk.xyz` pointing at the public IP of
+   the host running this stack (add an `AAAA` record too if you have IPv6).
+2. **Ports** — make sure inbound **TCP 80 and 443** reach this host. If the
+   Proxmox box is behind a home router, port-forward 80 and 443 to the
+   container/VM's LAN IP. Port 80 is required for the Let's Encrypt challenge.
+3. Start the stack (below). Caddy automatically requests and renews the TLS
+   certificate; the first request may take a few seconds while the cert is
+   issued.
+
+Change the domain or ACME email in `.env` (`DOMAIN`, `ACME_EMAIL`).
+
+> **Internal-only / no public ports?** Let's Encrypt's HTTP challenge needs port
+> 80 reachable. If you can't expose it, either use Caddy's DNS-01 challenge
+> (requires a Caddy build with your DNS provider's plugin) or replace the
+> `{$DOMAIN}` block in `caddy/Caddyfile` with `tls internal` for a self-signed
+> cert. Ask and I can wire either up.
+
 ## Deploy on Proxmox
 
 ### Option A — one shot from the Proxmox host (creates an LXC for you)
@@ -78,11 +103,11 @@ bash deploy/install.sh
 ### Option C — manual
 
 ```bash
-cp .env.example .env       # edit credentials + SESSION_SECRET
+cp .env.example .env       # edit credentials + SESSION_SECRET + DOMAIN
 docker compose up -d --build
 ```
 
-Then open **http://&lt;container-ip&gt;:8088**.
+Then open **https://pdf.snmk.xyz** (once DNS and ports 80/443 are in place).
 
 ---
 
@@ -96,11 +121,10 @@ Edit `.env` (copied from `.env.example`):
 | `GATEWAY_PASS`   | `1`                        | Login password (decoy hint aside)         |
 | `SESSION_SECRET` | `please-change-this-secret`| Cookie signing key — **change this**      |
 | `SITE_TITLE`     | `PDF Studio`               | Branding text                             |
+| `DOMAIN`         | `pdf.snmk.xyz`             | Public hostname Caddy serves over HTTPS   |
+| `ACME_EMAIL`     | _(empty)_                  | Let's Encrypt contact email (optional)    |
 
 Generate a strong secret: `openssl rand -hex 32`.
-
-Change the published port by editing the `8088:3000` mapping in
-`docker-compose.yml`.
 
 ---
 
@@ -120,9 +144,10 @@ volumes, so it survives restarts and updates.
 
 ## Security notes
 
-- This serves plain **HTTP** on your LAN. For remote access, put it behind a
-  reverse proxy with TLS (e.g. Caddy/Traefik/Nginx Proxy Manager) or a VPN
-  (WireGuard/Tailscale). Don't port-forward `:8088` to the internet as-is.
+- Traffic is served over **HTTPS** by Caddy with an auto-renewing Let's Encrypt
+  certificate, and session cookies are flagged `Secure`/`HttpOnly`. Only ports
+  80/443 (Caddy) are exposed; the gateway and Stirling stay on the internal
+  network.
 - Always change `SESSION_SECRET` from the default.
 - The single-user login is intended for a private home lab. For multi-user setups
   with real accounts, enable Stirling-PDF's own login system instead.

@@ -38,6 +38,10 @@ app.use(
     cookie: {
       httpOnly: true,
       sameSite: 'lax',
+      // 'auto' => Secure flag is set when the request is HTTPS (respects the
+      // X-Forwarded-Proto header from Caddy via trust proxy), but still works
+      // over plain HTTP on the LAN.
+      secure: 'auto',
       maxAge: 1000 * 60 * 60 * 12, // 12h
     },
   })

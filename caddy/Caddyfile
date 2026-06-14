@@ -1,0 +1,26 @@
+# Caddy reverse proxy for the PDF Suite.
+#
+# {$DOMAIN} and {$ACME_EMAIL} come from the environment (set in .env via
+# docker-compose). Caddy automatically obtains and renews a Let's Encrypt
+# TLS certificate for the domain and redirects HTTP -> HTTPS.
+
+{
+	email {$ACME_EMAIL}
+}
+
+{$DOMAIN} {
+	encode zstd gzip
+
+	# Allow large PDF uploads (matches Stirling's 200 MB default).
+	request_body {
+		max_size 220MB
+	}
+
+	reverse_proxy gateway:3000 {
+		# Long timeouts for OCR / big conversions.
+		transport http {
+			read_timeout 300s
+			write_timeout 300s
+		}
+	}
+}

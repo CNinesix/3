@@ -30,5 +30,8 @@ echo "==> Building and starting the stack"
 docker compose up -d --build
 
 IP="$(hostname -I | awk '{print $1}')"
+DOMAIN="$(grep -E '^DOMAIN=' .env | cut -d= -f2-)"
 echo
-echo "==> Up. Open http://${IP}:8088   (login: pdf / 1)"
+echo "==> Up. (login: pdf / 1)"
+echo "    Public  : https://${DOMAIN:-pdf.snmk.xyz}  (once DNS + ports 80/443 reach this host)"
+echo "    On LAN  : http://${IP}  (Caddy will redirect to HTTPS; use the domain for a valid cert)"

@@ -79,5 +79,6 @@ IP="$(pct exec "$CTID" -- bash -lc "hostname -I | awk '{print \$1}'" 2>/dev/null
 echo
 echo "==> Done."
 echo "    Container ID : $CTID"
-echo "    Open         : http://${IP:-<container-ip>}:8088"
+echo "    Container IP : ${IP:-<container-ip>}"
+echo "    Public URL   : https://pdf.snmk.xyz  (point DNS here; forward ports 80/443 to this host)"
 echo "    Login        : pdf / 1   (page shows a decoy 'minimum 8 characters')"
