@@ -1,4 +1,4 @@
-.PHONY: help venv install init seed web bot run backup test docker-up docker-down
+.PHONY: help venv install init seed web bot run backup deploy test docker-up docker-down
 
 help:
 	@echo "A2 Revenue OS — make targets:"
@@ -8,6 +8,7 @@ help:
 	@echo "  make web        run the dashboard (dev server)"
 	@echo "  make bot        run the Telegram bot worker"
 	@echo "  make backup     back up the database"
+	@echo "  make deploy     one-command server install (run with sudo)"
 	@echo "  make docker-up  build & start via docker compose"
 
 venv:
@@ -30,6 +31,9 @@ bot:
 
 backup:
 	./scripts/backup.sh
+
+deploy:
+	sudo bash deploy/install.sh
 
 docker-up:
 	docker compose up -d --build

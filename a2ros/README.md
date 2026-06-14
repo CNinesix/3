@@ -207,6 +207,39 @@ Natural language also works without slashes, e.g.
 
 ## Production deployment (a2.snmk.xyz)
 
+### Option 1 — one-command installer (recommended)
+
+On the Ubuntu/Debian server that will host the `a2.snmk.xyz` origin, clone the
+repo and run the installer. It is **idempotent** — installs system packages,
+creates the `a2ros` user + directories, copies the code to `/opt/a2ros`, builds
+the virtualenv, generates `.env` (with a random `APP_SECRET_KEY`), initialises
+the DB, and installs + starts the `a2ros-web` / `a2ros-bot` systemd services and
+the Nginx vhost.
+
+```bash
+git clone -b claude/a2-automation-bd-role-1bt2du <your-repo> a2ros-src
+cd a2ros-src/a2ros
+sudo bash deploy/install.sh
+# then add your secrets and restart:
+sudo nano /opt/a2ros/.env       # TELEGRAM_BOT_TOKEN, TELEGRAM_ALLOWED_USER_IDS, ADMIN_PASSWORD
+sudo systemctl restart a2ros-web a2ros-bot
+```
+
+Optional flags (environment variables):
+
+```bash
+# Custom domain + automatic Let's Encrypt certificate:
+sudo DOMAIN=a2.snmk.xyz ENABLE_LETSENCRYPT=1 LETSENCRYPT_EMAIL=you@example.com \
+     bash deploy/install.sh
+```
+
+Other overrides: `APP_DIR`, `DATA_DIR`, `SERVICE_USER`, `INSTALL_NGINX=0`.
+Re-run the same command after `git pull` to deploy updates (your `.env` and
+database are preserved). Finish by pointing Cloudflare's `a2.snmk.xyz` record at
+the server (SSL mode **Full (strict)**) — see [deploy/SSL.md](deploy/SSL.md).
+
+### Option 2 — manual steps
+
 Target: Ubuntu/Debian server, app in `/opt/a2ros`, DB in `/var/lib/a2ros`.
 
 ```bash
