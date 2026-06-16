@@ -88,9 +88,9 @@ for (title, color, side, x, y_top, h, lines, anchor) in cards:
 
 # center node
 svg.append(f'<rect x="{cx-215}" y="{cy-58}" width="430" height="116" rx="16" fill="#0b1f3a"/>')
-svg.append(f'<text x="{cx}" y="{cy-18}" text-anchor="middle" font-size="20" font-weight="700" fill="#ffffff">Senior BDM — First Meeting</text>')
-svg.append(f'<text x="{cx}" y="{cy+10}" text-anchor="middle" font-size="14" fill="#8fb6f0">Impress the boss: a point of view,</text>')
-svg.append(f'<text x="{cx}" y="{cy+32}" text-anchor="middle" font-size="14" fill="#8fb6f0">a plan, and a system — not a blank page</text>')
+svg.append(f'<text x="{cx}" y="{cy-18}" text-anchor="middle" font-size="20" font-weight="700" fill="#ffffff">First Draft — Approaches</text>')
+svg.append(f'<text x="{cx}" y="{cy+10}" text-anchor="middle" font-size="14" fill="#8fb6f0">A2 Automation · Johor BD</text>')
+svg.append(f'<text x="{cx}" y="{cy+32}" text-anchor="middle" font-size="14" fill="#8fb6f0">go-to-market plays v1 — for discussion</text>')
 
 # cards
 for (title, color, side, x, y_top, h, lines, anchor) in cards:
@@ -107,5 +107,7 @@ for (title, color, side, x, y_top, h, lines, anchor) in cards:
 svg.append(f'<text x="{W/2}" y="{H-16}" text-anchor="middle" font-size="12" fill="#6b7689">Listen 60% · speak to revenue &amp; risk · close on commitments — source: JB Prospect Tracker + First Meeting Brief</text>')
 svg.append('</svg>')
 
-open("/home/user/3/bdm_mindmap.svg","w").write("\n".join(svg))
+import os
+_out = os.path.join(os.path.dirname(os.path.abspath(__file__)), "bdm_mindmap.svg")
+open(_out, "w").write("\n".join(svg))
 print("SVG written")
