@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="1180" viewBox="0 0 1700 1180" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<rect width="1700" height="1180" fill="#f4f6fb"/>
+<text x="850.0" y="40" text-anchor="middle" font-size="22" font-weight="700" fill="#0b1f3a">A2 Automation Sdn Bhd — Johor Business Development · First-Meeting Mind Map</text>
+<path d="M 540 175.0 C 587.5 175.0, 587.5 590, 635 590" stroke="#2f80ed" stroke-width="3" fill="none" opacity="0.55"/>
+<circle cx="540" cy="175.0" r="5" fill="#2f80ed"/>
+<path d="M 540 524.0 C 587.5 524.0, 587.5 590, 635 590" stroke="#8e44ad" stroke-width="3" fill="none" opacity="0.55"/>
+<circle cx="540" cy="524.0" r="5" fill="#8e44ad"/>
+<path d="M 540 920.0 C 587.5 920.0, 587.5 590, 635 590" stroke="#16a085" stroke-width="3" fill="none" opacity="0.55"/>
+<circle cx="540" cy="920.0" r="5" fill="#16a085"/>
+<path d="M 1160 149.0 C 1112.5 149.0, 1112.5 590, 1065 590" stroke="#e67e22" stroke-width="3" fill="none" opacity="0.55"/>
+<circle cx="1160" cy="149.0" r="5" fill="#e67e22"/>
+<path d="M 1160 511.0 C 1112.5 511.0, 1112.5 590, 1065 590" stroke="#c0392b" stroke-width="3" fill="none" opacity="0.55"/>
+<circle cx="1160" cy="511.0" r="5" fill="#c0392b"/>
+<path d="M 1160 946.0 C 1112.5 946.0, 1112.5 590, 1065 590" stroke="#34495e" stroke-width="3" fill="none" opacity="0.55"/>
+<circle cx="1160" cy="946.0" r="5" fill="#34495e"/>
+<rect x="635" y="532" width="430" height="116" rx="16" fill="#0b1f3a"/>
+<text x="850" y="572" text-anchor="middle" font-size="20" font-weight="700" fill="#ffffff">Senior BDM — First Meeting</text>
+<text x="850" y="600" text-anchor="middle" font-size="14" fill="#8fb6f0">Impress the boss: a point of view,</text>
+<text x="850" y="622" text-anchor="middle" font-size="14" fill="#8fb6f0">a plan, and a system — not a blank page</text>
+<rect x="70" y="40" width="470" height="270" rx="14" fill="#ffffff" stroke="#2f80ed" stroke-width="2"/>
+<rect x="70" y="40" width="470" height="46" rx="14" fill="#2f80ed"/>
+<rect x="70" y="72" width="470" height="14" fill="#2f80ed"/>
+<text x="88" y="70" font-size="16" font-weight="700" fill="#ffffff">THREE PLAYS</text>
+<text x="88" y="110" font-size="13.5" fill="#1a2030">• Data Centres — AI CCTV, intrusion,</text>
+<text x="88" y="136" font-size="13.5" fill="#1a2030">&#160;&#160;&#160;ANPR, access (via contractor / M&amp;E)</text>
+<text x="88" y="162" font-size="13.5" fill="#1a2030">• Developers — preferred-vendor framework</text>
+<text x="88" y="188" font-size="13.5" fill="#1a2030">&#160;&#160;&#160;→ recurring tenant deals</text>
+<text x="88" y="214" font-size="13.5" fill="#1a2030">• Specifiers (M&amp;E) — get designed-in</text>
+<text x="88" y="240" font-size="13.5" fill="#1a2030">&#160;&#160;&#160;before tender</text>
+<text x="88" y="266" font-size="13.5" fill="#1a2030">• Mfg &amp; FM — retrofit to AI analytics</text>
+<text x="88" y="292" font-size="13.5" fill="#1a2030">&#160;&#160;&#160;+ maintenance contracts</text>
+<rect x="70" y="415" width="470" height="218" rx="14" fill="#ffffff" stroke="#8e44ad" stroke-width="2"/>
+<rect x="70" y="415" width="470" height="46" rx="14" fill="#8e44ad"/>
+<rect x="70" y="447" width="470" height="14" fill="#8e44ad"/>
+<text x="88" y="445" font-size="16" font-weight="700" fill="#ffffff">PRIORITY TARGETS  (JB Tracker)</text>
+<text x="88" y="485" font-size="13.5" fill="#1a2030">• STACK Infrastructure — DC, Iskandar Puteri</text>
+<text x="88" y="511" font-size="13.5" fill="#1a2030">• AirTrunk JHB1 — DC, Sedenak</text>
+<text x="88" y="537" font-size="13.5" fill="#1a2030">• YTL Green DC Park — DC, Kulai</text>
+<text x="88" y="563" font-size="13.5" fill="#1a2030">• AME Elite — Developer, Senai</text>
+<text x="88" y="589" font-size="13.5" fill="#1a2030">• Eco World — Developer, Senai</text>
+<text x="88" y="615" font-size="13.5" fill="#1a2030">• Megapower M&amp;E — Specifier, JB City</text>
+<rect x="70" y="850" width="470" height="140" rx="14" fill="#ffffff" stroke="#16a085" stroke-width="2"/>
+<rect x="70" y="850" width="470" height="46" rx="14" fill="#16a085"/>
+<rect x="70" y="882" width="470" height="14" fill="#16a085"/>
+<text x="88" y="880" font-size="16" font-weight="700" fill="#ffffff">QUICK WIN</text>
+<text x="88" y="920" font-size="13.5" fill="#1a2030">• AME Elite &amp; EcoWorld run multiple parks</text>
+<text x="88" y="946" font-size="13.5" fill="#1a2030">• Week-1: preferred-vendor framework talk</text>
+<text x="88" y="972" font-size="13.5" fill="#1a2030">• One “yes” = recurring tenant deals</text>
+<rect x="1160" y="40" width="470" height="218" rx="14" fill="#ffffff" stroke="#e67e22" stroke-width="2"/>
+<rect x="1160" y="40" width="470" height="46" rx="14" fill="#e67e22"/>
+<rect x="1160" y="72" width="470" height="14" fill="#e67e22"/>
+<text x="1178" y="70" font-size="16" font-weight="700" fill="#ffffff">30 / 60 / 90 PLAN</text>
+<text x="1178" y="110" font-size="13.5" fill="#1a2030">• 0–30  Learn &amp; map: product, win/loss,</text>
+<text x="1178" y="136" font-size="13.5" fill="#1a2030">&#160;&#160;&#160;audit accounts, finalise target list</text>
+<text x="1178" y="162" font-size="13.5" fill="#1a2030">• 31–60  Activate: book meetings, 2–3</text>
+<text x="1178" y="188" font-size="13.5" fill="#1a2030">&#160;&#160;&#160;partnerships, first proposals out</text>
+<text x="1178" y="214" font-size="13.5" fill="#1a2030">• 61–90  Convert: close deals, repeatable</text>
+<text x="1178" y="240" font-size="13.5" fill="#1a2030">&#160;&#160;&#160;motion, commit monthly forecast</text>
+<rect x="1160" y="415" width="470" height="192" rx="14" fill="#ffffff" stroke="#c0392b" stroke-width="2"/>
+<rect x="1160" y="415" width="470" height="46" rx="14" fill="#c0392b"/>
+<rect x="1160" y="447" width="470" height="14" fill="#c0392b"/>
+<text x="1178" y="445" font-size="16" font-weight="700" fill="#ffffff">QUESTIONS FOR BOSS</text>
+<text x="1178" y="485" font-size="13.5" fill="#1a2030">• Ideal customer? size / margin / sector</text>
+<text x="1178" y="511" font-size="13.5" fill="#1a2030">• Year-1 target &amp; typical sales cycle?</text>
+<text x="1178" y="537" font-size="13.5" fill="#1a2030">• Existing accounts to protect (not cold)?</text>
+<text x="1178" y="563" font-size="13.5" fill="#1a2030">• Pricing flexibility for big DC tenders?</text>
+<text x="1178" y="589" font-size="13.5" fill="#1a2030">• What = success at 90 days, to you?</text>
+<rect x="1160" y="850" width="470" height="192" rx="14" fill="#ffffff" stroke="#34495e" stroke-width="2"/>
+<rect x="1160" y="850" width="470" height="46" rx="14" fill="#34495e"/>
+<rect x="1160" y="882" width="470" height="14" fill="#34495e"/>
+<text x="1178" y="880" font-size="16" font-weight="700" fill="#ffffff">SYSTEM &amp; COMMITMENTS</text>
+<text x="1178" y="920" font-size="13.5" fill="#1a2030">• CRM: stage tracking + weighted forecast</text>
+<text x="1178" y="946" font-size="13.5" fill="#1a2030">&#160;&#160;&#160;+ mobile follow-up alerts</text>
+<text x="1178" y="972" font-size="13.5" fill="#1a2030">• Clean numbers — nothing dropped</text>
+<text x="1178" y="998" font-size="13.5" fill="#1a2030">• Close: restate priorities → 3 actions</text>
+<text x="1178" y="1024" font-size="13.5" fill="#1a2030">&#160;&#160;&#160;→ report-back date</text>
+<text x="850.0" y="1164" text-anchor="middle" font-size="12" fill="#6b7689">Listen 60% · speak to revenue &amp; risk · close on commitments — source: JB Prospect Tracker + First Meeting Brief</text>
+</svg>
