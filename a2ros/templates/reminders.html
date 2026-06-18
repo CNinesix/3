@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Reminders · A2 Revenue OS{% endblock %}
+{% block content %}
+<h1>Reminders & follow-ups</h1>
+
+<div class="card" style="margin-bottom:1rem">
+  <h2>New reminder</h2>
+  <form method="post" class="form-grid">
+    <div class="field" style="grid-column:1/-1"><label>What to do *</label><input name="text" placeholder="Call ABC Factory about proposal" required></div>
+    <div class="field"><label>When *</label><input type="datetime-local" name="due_at" required></div>
+    <div class="field"><label>Link to account</label>
+      <select name="account_id"><option value="">— none —</option>{% for a in accounts %}<option value="{{ a.id }}">{{ a.name }}</option>{% endfor %}</select>
+    </div>
+    <div class="field" style="grid-column:1/-1"><button class="btn" type="submit">Add reminder</button></div>
+  </form>
+  <p class="muted" style="margin:.4rem 0 0">Reminders fire via Telegram at the scheduled time (timezone {{ now_local.tzinfo }}).</p>
+</div>
+
+<div class="card">
+  <div class="section-title"><h2>Pending</h2></div>
+  <div class="table-wrap">
+    <table class="stack">
+      <thead><tr><th>Due</th><th>Task</th><th>Account</th><th></th></tr></thead>
+      <tbody>
+      {% for r in pending %}
+        <tr>
+          <td data-label="Due"><strong>{{ r.due_at|localdt }}</strong>{% if r.notified %} <span class="muted">(sent)</span>{% endif %}</td>
+          <td data-label="Task">{{ r.text }}</td>
+          <td data-label="Account">{% if r.account %}<a href="{{ url_for('web.account_detail', account_id=r.account.id) }}">{{ r.account.name }}</a>{% else %}—{% endif %}</td>
+          <td data-label="" class="right"><form method="post" action="{{ url_for('web.reminder_done', reminder_id=r.id) }}"><button class="btn btn-sm btn-success" type="submit">Done</button></form></td>
+        </tr>
+      {% else %}<tr><td colspan="4" class="muted">Nothing pending. 🎉</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% if done %}
+<div class="card" style="margin-top:1rem">
+  <h2 class="muted">Recently completed</h2>
+  <ul class="list-clean">
+    {% for r in done %}<li class="muted">✓ {{ r.due_at|localdt }} — {{ r.text }}</li>{% endfor %}
+  </ul>
+</div>
+{% endif %}
+{% endblock %}

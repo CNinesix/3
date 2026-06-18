@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Telegram · A2 Revenue OS{% endblock %}
+{% block content %}
+<h1>🤖 Telegram assistant</h1>
+
+<div class="grid cols-2">
+  <div class="card">
+    <h2>Connection status</h2>
+    <ul class="list-clean">
+      <li>
+        <span class="status-dot {{ 'status-on' if status.online else 'status-off' }}"></span>
+        {% if status.online %}Online — <strong>@{{ status.username }}</strong>
+        {% elif not status.configured %}Not configured — set <code>TELEGRAM_BOT_TOKEN</code> in <code>.env</code>
+        {% else %}Unreachable — {{ status.error }}{% endif %}
+      </li>
+      <li><span class="muted">Daily report time</span><br>{{ daily_report_time }} ({{ now_local.tzinfo }})</li>
+      <li><span class="muted">Voice transcription</span><br>{{ 'Enabled' if transcription_enabled else 'Disabled (set TRANSCRIBE_API_KEY to enable)' }}</li>
+      <li><span class="muted">Last command received</span><br>
+        {% if last %}<code>{{ last.command or last.raw_text[:40] }}</code> from {{ last.username or last.telegram_user_id }} · {{ last.created_at|localdt }}{% else %}none yet{% endif %}
+      </li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Settings & whitelist</h2>
+    <form method="post">
+      <input type="hidden" name="action" value="settings">
+      <div class="field">
+        <label>Allowed Telegram IDs from <code>.env</code> (read-only)</label>
+        <input value="{{ env_ids|join(', ') if env_ids else '— none set in .env —' }}" disabled>
+      </div>
+      <div class="field">
+        <label>Extra allowed Telegram IDs (comma separated)</label>
+        <input name="extra_telegram_ids" value="{{ extra_ids }}" placeholder="123456789, 987654321">
+      </div>
+      <div class="checkbox-row"><input type="checkbox" id="dr" name="daily_report_enabled" value="1" {{ 'checked' if daily_report_enabled }}><label for="dr">Send daily morning report</label></div>
+      <div class="checkbox-row" style="margin-top:.4rem"><input type="checkbox" id="al" name="alerts_enabled" value="1" {{ 'checked' if alerts_enabled }}><label for="al">Enable proactive alerts (idle / proposal / closing soon)</label></div>
+      <div class="actions" style="margin-top:1rem"><button class="btn" type="submit">Save settings</button></div>
+    </form>
+    <p class="muted">Find your numeric ID via <strong>@userinfobot</strong>. Only whitelisted IDs can use the bot — there is no public access.</p>
+  </div>
+</div>
+
+<div class="grid cols-2" style="margin-top:1rem">
+  <div class="card">
+    <div class="section-title"><h2>Pending reminders</h2><a class="btn btn-sm btn-outline" href="{{ url_for('web.reminders') }}">Manage</a></div>
+    <ul class="list-clean">
+      {% for r in reminders %}<li>⏰ <strong>{{ r.due_at|localdt }}</strong> — {{ r.text }}{% if r.account %} <span class="muted">· {{ r.account.name }}</span>{% endif %}</li>
+      {% else %}<li class="muted">No pending reminders.</li>{% endfor %}
+    </ul>
+  </div>
+  <div class="card cmd-list">
+    <h2>Commands</h2>
+    <ul class="list-clean">
+      <li><code>/summary</code> CEO summary</li>
+      <li><code>/today</code> · <code>/followup</code> meetings & follow-ups</li>
+      <li><code>/leads</code> · <code>/hot</code> · <code>/pipeline</code></li>
+      <li><code>/addlead ABC Factory, Johor, CCTV, contact Mr Tan, value RM80k</code></li>
+      <li><code>/addnote ABC Factory: need 64 CCTV, budget RM120k</code></li>
+      <li><code>/update ABC Factory to proposal</code></li>
+      <li><code>/search ABC Factory</code></li>
+      <li><code>/remind call ABC Factory next Monday 10am</code></li>
+      <li><code>/report</code> full morning report now</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card" style="margin-top:1rem">
+  <div class="section-title"><h2>Activity log</h2></div>
+  <div class="table-wrap">
+    <table class="stack">
+      <thead><tr><th>When</th><th>User</th><th>Command</th><th>Message</th><th>Response</th></tr></thead>
+      <tbody>
+      {% for l in logs %}
+        <tr class="{{ '' if l.allowed else 'muted' }}">
+          <td data-label="When">{{ l.created_at|localdt }}</td>
+          <td data-label="User">{{ l.username or l.telegram_user_id }}{% if not l.allowed %} ⛔{% endif %}</td>
+          <td data-label="Command"><code>{{ l.command or '—' }}</code></td>
+          <td data-label="Message">{{ l.raw_text[:60] }}</td>
+          <td data-label="Response" class="muted">{{ l.response_summary[:60] }}</td>
+        </tr>
+      {% else %}<tr><td colspan="5" class="muted">No Telegram activity yet.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

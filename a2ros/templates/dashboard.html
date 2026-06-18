@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · A2 Revenue OS{% endblock %}
+{% block content %}
+<h1>Dashboard <span class="muted" style="font-size:.9rem;font-weight:400">— {{ summary.month_label }}</span></h1>
+
+<div class="grid kpis">
+  <div class="card kpi win"><div class="label">Monthly revenue (Won)</div><div class="value">{{ summary.monthly_revenue|money }}</div><div class="sub">Closed this month</div></div>
+  <div class="card kpi"><div class="label">Pipeline value</div><div class="value">{{ summary.pipeline_value|money }}</div><div class="sub">{{ summary.open_count }} open deals</div></div>
+  <div class="card kpi"><div class="label">Weighted pipeline</div><div class="value">{{ summary.weighted_pipeline|money }}</div><div class="sub">Probability-adjusted</div></div>
+  <div class="card kpi hot"><div class="label">Hot opportunities</div><div class="value">{{ summary.hot_count }}</div><div class="sub">Flagged hot</div></div>
+  <div class="card kpi"><div class="label">Proposals pending</div><div class="value">{{ summary.proposals_pending }}</div><div class="sub">Awaiting decision</div></div>
+  <div class="card kpi"><div class="label">Expected closing</div><div class="value">{{ summary.expected_closing|money }}</div><div class="sub">This month</div></div>
+</div>
+
+<div class="grid cols-2" style="margin-top:1rem">
+  <div class="card">
+    <div class="section-title"><h2>Pipeline by stage</h2></div>
+    <div class="chart-box"><canvas data-bar-chart='{{ chart_stage }}'></canvas></div>
+  </div>
+  <div class="card">
+    <div class="section-title"><h2>Open value by zone</h2></div>
+    <div class="chart-box"><canvas data-bar-chart='{{ chart_zone }}'></canvas></div>
+  </div>
+</div>
+
+<div class="grid cols-2" style="margin-top:1rem">
+  <div class="card">
+    <div class="section-title"><h2>🗓 Today's meetings & follow-ups</h2></div>
+    <ul class="list-clean">
+      {% for r in meetings %}
+        <li><strong>{{ r.due_at|localdt('%H:%M') }}</strong> — {{ r.text }}{% if r.account %} <span class="muted">· {{ r.account.name }}</span>{% endif %}</li>
+      {% else %}<li class="muted">No meetings scheduled today.</li>{% endfor %}
+    </ul>
+    {% if followups %}<hr style="border:0;border-top:1px solid var(--line);margin:.6rem 0">
+    <ul class="list-clean">
+      {% for r in followups %}
+        <li>⏰ <strong>{{ r.due_at|localdt('%d %b %H:%M') }}</strong> — {{ r.text }}{% if r.account %} <span class="muted">· {{ r.account.name }}</span>{% endif %}</li>
+      {% endfor %}
+    </ul>{% endif %}
+  </div>
+  <div class="card">
+    <div class="section-title"><h2>🔥 Hot opportunities</h2><a class="btn btn-sm btn-outline" href="{{ url_for('web.opportunities') }}">All</a></div>
+    <ul class="list-clean">
+      {% for o in hot %}
+        <li><a href="{{ url_for('web.opportunity_detail', opp_id=o.id) }}">{{ o.account.name }}</a> — {{ o.title }}
+          <span class="badge badge-{{ o.stage }}">{{ o.stage }}</span> <span class="muted right">{{ o.value|money }}</span></li>
+      {% else %}<li class="muted">No hot deals flagged. Open a deal and tick “Hot”.</li>{% endfor %}
+    </ul>
+  </div>
+</div>
+
+<div class="grid cols-2" style="margin-top:1rem">
+  <div class="card">
+    <div class="section-title"><h2>🆕 New leads to contact</h2></div>
+    <ul class="list-clean">
+      {% for o in leads %}
+        <li><a href="{{ url_for('web.opportunity_detail', opp_id=o.id) }}">{{ o.account.name }}</a> — {{ o.title }} <span class="muted right">{{ o.value|money }}</span></li>
+      {% else %}<li class="muted">No new leads.</li>{% endfor %}
+    </ul>
+  </div>
+  <div class="card">
+    <div class="section-title"><h2>📝 Proposals pending</h2></div>
+    <ul class="list-clean">
+      {% for o in proposals %}
+        <li><a href="{{ url_for('web.opportunity_detail', opp_id=o.id) }}">{{ o.account.name }}</a> — {{ o.title }} <span class="muted right">{{ o.value|money }}</span></li>
+      {% else %}<li class="muted">No proposals pending.</li>{% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

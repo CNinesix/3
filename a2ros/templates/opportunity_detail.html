@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}{{ opp.title }} · A2 Revenue OS{% endblock %}
+{% block content %}
+<h1>{{ opp.title }} {% if opp.is_hot %}<span class="hot-tag">HOT</span>{% endif %}</h1>
+<p class="muted"><a href="{{ url_for('web.account_detail', account_id=opp.account_id) }}">{{ opp.account.name }}</a> · {{ opp.account.zone or 'zone n/a' }}</p>
+
+<div class="actions">
+  <form method="post" action="{{ url_for('web.opportunity_stage', opp_id=opp.id) }}" class="inline-form">
+    <select name="stage">{% for s in stages %}<option value="{{ s }}" {{ 'selected' if opp.stage == s }}>{{ s }}</option>{% endfor %}</select>
+    <button class="btn btn-sm" type="submit">Update stage</button>
+  </form>
+  <span class="spacer"></span>
+  <a class="btn btn-outline" href="{{ url_for('web.opportunity_edit', opp_id=opp.id) }}">Edit</a>
+</div>
+
+<div class="grid cols-2">
+  <div class="card">
+    <h2>Deal</h2>
+    <ul class="list-clean">
+      <li><span class="muted">Stage</span><br><span class="badge badge-{{ opp.stage }}">{{ opp.stage }}</span></li>
+      <li><span class="muted">Value</span><br>{{ opp.value|money(opp.currency) }} · weighted {{ opp.weighted_value|money(opp.currency) }} ({{ opp.probability }}%)</li>
+      <li><span class="muted">Expected close</span><br>{{ opp.expected_close_date|localdt('%d %b %Y') if opp.expected_close_date else '—' }}</li>
+      <li><span class="muted">Last activity</span><br>{{ opp.last_activity_at|localdt }}</li>
+      {% if opp.description %}<li><span class="muted">Description</span><br>{{ opp.description }}</li>{% endif %}
+    </ul>
+  </div>
+  <div class="card">
+    <div class="section-title"><h2>Activity</h2></div>
+    <form method="post" action="{{ url_for('web.account_add_note', account_id=opp.account_id) }}" class="field">
+      <textarea name="note" placeholder="Log a note for this account…" required></textarea>
+      <div class="inline-form" style="margin-top:.5rem">
+        <select name="type" style="max-width:200px"><option value="note">Note</option><option value="meeting_note">Meeting note</option><option value="call">Call</option></select>
+        <button class="btn btn-sm" type="submit">Add</button>
+      </div>
+    </form>
+    <ul class="list-clean">
+      {% for act in activities %}
+        <li><span class="muted">{{ act.created_at|localdt }} · {{ act.type }}{% if act.source == 'telegram' %} · 🤖{% endif %}</span><br>{{ act.note }}</li>
+      {% else %}<li class="muted">No activity yet.</li>{% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

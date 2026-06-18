@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Settings · A2 Revenue OS{% endblock %}
+{% block content %}
+<h1>⚙️ My settings</h1>
+<div class="card" style="max-width:560px">
+  <form method="post">
+    <div class="field"><label>Name</label><input name="name" value="{{ user.name }}"></div>
+    <div class="field"><label>Email</label><input value="{{ user.email }}" disabled></div>
+    <div class="field"><label>My Telegram user ID</label><input name="telegram_user_id" value="{{ user.telegram_user_id or '' }}" inputmode="numeric" placeholder="Get it from @userinfobot"></div>
+    <div class="field"><label>New password</label><input type="password" name="password" placeholder="Leave blank to keep current"></div>
+    <div class="actions"><button class="btn" type="submit">Save</button></div>
+  </form>
+  <p class="muted">Linking your Telegram ID here lets reminders you create be attributed to you. To allow the bot to talk to you, the ID must also be whitelisted on the <a href="{{ url_for('web.telegram_page') }}">Telegram page</a>.</p>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}{{ code }} · A2 Revenue OS{% endblock %}
+{% block content %}
+<div class="card" style="max-width:520px;margin:3rem auto;text-align:center">
+  <h1 style="font-size:3rem;margin:0">{{ code }}</h1>
+  <p class="muted">{{ message }}</p>
+  <a class="btn" href="{{ url_for('web.dashboard') }}">Back to dashboard</a>
+</div>
+{% endblock %}
+{% block auth_content %}
+<div class="login-wrap"><div class="login-card" style="text-align:center">
+  <h1 style="font-size:3rem;margin:0">{{ code }}</h1>
+  <p class="muted">{{ message }}</p>
+  <a class="btn" href="{{ url_for('auth.login') }}">Sign in</a>
+</div></div>
+{% endblock %}

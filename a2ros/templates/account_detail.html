@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}{{ account.name }} · A2 Revenue OS{% endblock %}
+{% block content %}
+<h1>{{ account.name }}</h1>
+<div class="actions">
+  <a class="btn btn-outline" href="{{ url_for('web.account_edit', account_id=account.id) }}">Edit</a>
+  <a class="btn" href="{{ url_for('web.opportunity_new') }}">+ New opportunity</a>
+</div>
+
+<div class="grid cols-2">
+  <div class="card">
+    <h2>Company</h2>
+    <ul class="list-clean">
+      <li><span class="muted">Industry</span><br>{{ account.industry or '—' }}</li>
+      <li><span class="muted">Zone / location</span><br>{{ account.zone or '—' }}{% if account.location %} · {{ account.location }}{% endif %}</li>
+      <li><span class="muted">Contact</span><br>{{ account.contact_name or '—' }} {{ account.contact_phone }} {{ account.contact_email }}</li>
+      {% if account.notes %}<li><span class="muted">Notes</span><br>{{ account.notes }}</li>{% endif %}
+    </ul>
+  </div>
+  <div class="card">
+    <div class="section-title"><h2>Opportunities</h2></div>
+    <div class="table-wrap">
+      <table class="stack">
+        <thead><tr><th>Title</th><th>Stage</th><th class="right">Value</th></tr></thead>
+        <tbody>
+        {% for o in account.opportunities %}
+          <tr>
+            <td data-label="Title"><a href="{{ url_for('web.opportunity_detail', opp_id=o.id) }}">{{ o.title }}</a>{% if o.is_hot %} <span class="hot-tag">HOT</span>{% endif %}</td>
+            <td data-label="Stage"><span class="badge badge-{{ o.stage }}">{{ o.stage }}</span></td>
+            <td data-label="Value" class="right">{{ o.value|money(o.currency) }}</td>
+          </tr>
+        {% else %}<tr><td colspan="3" class="muted">No opportunities yet.</td></tr>{% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="grid cols-2" style="margin-top:1rem">
+  <div class="card">
+    <div class="section-title"><h2>Activity log</h2></div>
+    <form method="post" action="{{ url_for('web.account_add_note', account_id=account.id) }}" class="field">
+      <textarea name="note" placeholder="Add a note or meeting note…" required></textarea>
+      <div class="inline-form" style="margin-top:.5rem">
+        <select name="type" style="max-width:200px">
+          <option value="note">Note</option>
+          <option value="meeting_note">Meeting note</option>
+          <option value="call">Call</option>
+          <option value="email">Email</option>
+        </select>
+        <button class="btn btn-sm" type="submit">Add</button>
+      </div>
+    </form>
+    <ul class="list-clean">
+      {% for act in activities %}
+        <li><span class="muted">{{ act.created_at|localdt }} · {{ act.type }}{% if act.source == 'telegram' %} · 🤖{% endif %}</span><br>{{ act.note }}</li>
+      {% else %}<li class="muted">No activity yet.</li>{% endfor %}
+    </ul>
+  </div>
+  <div class="card">
+    <div class="section-title"><h2>Open reminders</h2><a class="btn btn-sm btn-outline" href="{{ url_for('web.reminders') }}">All</a></div>
+    <ul class="list-clean">
+      {% for r in reminders %}
+        <li>⏰ <strong>{{ r.due_at|localdt }}</strong> — {{ r.text }}</li>
+      {% else %}<li class="muted">No open reminders.</li>{% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}
