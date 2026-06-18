@@ -68,16 +68,16 @@
 <div class="card" style="margin-top:1rem">
   <div class="section-title"><h2>Activity log</h2></div>
   <div class="table-wrap">
-    <table>
+    <table class="stack">
       <thead><tr><th>When</th><th>User</th><th>Command</th><th>Message</th><th>Response</th></tr></thead>
       <tbody>
       {% for l in logs %}
         <tr class="{{ '' if l.allowed else 'muted' }}">
-          <td>{{ l.created_at|localdt }}</td>
-          <td>{{ l.username or l.telegram_user_id }}{% if not l.allowed %} ⛔{% endif %}</td>
-          <td><code>{{ l.command or '—' }}</code></td>
-          <td>{{ l.raw_text[:60] }}</td>
-          <td class="muted">{{ l.response_summary[:60] }}</td>
+          <td data-label="When">{{ l.created_at|localdt }}</td>
+          <td data-label="User">{{ l.username or l.telegram_user_id }}{% if not l.allowed %} ⛔{% endif %}</td>
+          <td data-label="Command"><code>{{ l.command or '—' }}</code></td>
+          <td data-label="Message">{{ l.raw_text[:60] }}</td>
+          <td data-label="Response" class="muted">{{ l.response_summary[:60] }}</td>
         </tr>
       {% else %}<tr><td colspan="5" class="muted">No Telegram activity yet.</td></tr>{% endfor %}
       </tbody>

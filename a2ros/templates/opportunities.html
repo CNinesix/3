@@ -13,18 +13,18 @@
 </div>
 <div class="card">
   <div class="table-wrap">
-    <table>
+    <table class="stack">
       <thead><tr><th>Account</th><th>Opportunity</th><th>Stage</th><th class="right">Value</th><th>Prob.</th><th>Close</th><th>Last activity</th></tr></thead>
       <tbody>
       {% for o in opportunities %}
         <tr>
-          <td><a href="{{ url_for('web.account_detail', account_id=o.account_id) }}">{{ o.account.name }}</a></td>
-          <td><a href="{{ url_for('web.opportunity_detail', opp_id=o.id) }}">{{ o.title }}</a>{% if o.is_hot %} <span class="hot-tag">HOT</span>{% endif %}</td>
-          <td><span class="badge badge-{{ o.stage }}">{{ o.stage }}</span></td>
-          <td class="right">{{ o.value|money(o.currency) }}</td>
-          <td>{{ o.probability }}%</td>
-          <td>{{ o.expected_close_date|localdt('%d %b %y') if o.expected_close_date else '—' }}</td>
-          <td class="muted">{{ o.last_activity_at|localdt('%d %b') }}</td>
+          <td data-label="Account"><a href="{{ url_for('web.account_detail', account_id=o.account_id) }}">{{ o.account.name }}</a></td>
+          <td data-label="Opportunity"><a href="{{ url_for('web.opportunity_detail', opp_id=o.id) }}">{{ o.title }}</a>{% if o.is_hot %} <span class="hot-tag">HOT</span>{% endif %}</td>
+          <td data-label="Stage"><span class="badge badge-{{ o.stage }}">{{ o.stage }}</span></td>
+          <td data-label="Value" class="right">{{ o.value|money(o.currency) }}</td>
+          <td data-label="Prob.">{{ o.probability }}%</td>
+          <td data-label="Close">{{ o.expected_close_date|localdt('%d %b %y') if o.expected_close_date else '—' }}</td>
+          <td data-label="Last activity" class="muted">{{ o.last_activity_at|localdt('%d %b') }}</td>
         </tr>
       {% else %}<tr><td colspan="7" class="muted">No opportunities. Add one or capture a lead via Telegram.</td></tr>{% endfor %}
       </tbody>

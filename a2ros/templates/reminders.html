@@ -19,15 +19,15 @@
 <div class="card">
   <div class="section-title"><h2>Pending</h2></div>
   <div class="table-wrap">
-    <table>
+    <table class="stack">
       <thead><tr><th>Due</th><th>Task</th><th>Account</th><th></th></tr></thead>
       <tbody>
       {% for r in pending %}
         <tr>
-          <td><strong>{{ r.due_at|localdt }}</strong>{% if r.notified %} <span class="muted">(sent)</span>{% endif %}</td>
-          <td>{{ r.text }}</td>
-          <td>{% if r.account %}<a href="{{ url_for('web.account_detail', account_id=r.account.id) }}">{{ r.account.name }}</a>{% else %}—{% endif %}</td>
-          <td class="right"><form method="post" action="{{ url_for('web.reminder_done', reminder_id=r.id) }}"><button class="btn btn-sm btn-success" type="submit">Done</button></form></td>
+          <td data-label="Due"><strong>{{ r.due_at|localdt }}</strong>{% if r.notified %} <span class="muted">(sent)</span>{% endif %}</td>
+          <td data-label="Task">{{ r.text }}</td>
+          <td data-label="Account">{% if r.account %}<a href="{{ url_for('web.account_detail', account_id=r.account.id) }}">{{ r.account.name }}</a>{% else %}—{% endif %}</td>
+          <td data-label="" class="right"><form method="post" action="{{ url_for('web.reminder_done', reminder_id=r.id) }}"><button class="btn btn-sm btn-success" type="submit">Done</button></form></td>
         </tr>
       {% else %}<tr><td colspan="4" class="muted">Nothing pending. 🎉</td></tr>{% endfor %}
       </tbody>

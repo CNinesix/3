@@ -12,17 +12,17 @@
 </div>
 <div class="card">
   <div class="table-wrap">
-    <table>
+    <table class="stack">
       <thead><tr><th>Company</th><th>Zone</th><th>Contact</th><th>Deals</th><th class="right">Open value</th></tr></thead>
       <tbody>
       {% for a in accounts %}
         {% set open_value = a.opportunities | selectattr('is_open') | sum(attribute='value') %}
         <tr>
-          <td><a href="{{ url_for('web.account_detail', account_id=a.id) }}"><strong>{{ a.name }}</strong></a>{% if a.industry %}<br><span class="muted">{{ a.industry }}</span>{% endif %}</td>
-          <td>{{ a.zone or '—' }}</td>
-          <td>{{ a.contact_name or '—' }}{% if a.contact_phone %}<br><span class="muted">{{ a.contact_phone }}</span>{% endif %}</td>
-          <td>{{ a.opportunities|length }}</td>
-          <td class="right">{{ open_value|money }}</td>
+          <td data-label="Company"><a href="{{ url_for('web.account_detail', account_id=a.id) }}"><strong>{{ a.name }}</strong></a>{% if a.industry %}<br><span class="muted">{{ a.industry }}</span>{% endif %}</td>
+          <td data-label="Zone">{{ a.zone or '—' }}</td>
+          <td data-label="Contact">{{ a.contact_name or '—' }}{% if a.contact_phone %}<br><span class="muted">{{ a.contact_phone }}</span>{% endif %}</td>
+          <td data-label="Deals">{{ a.opportunities|length }}</td>
+          <td data-label="Open value" class="right">{{ open_value|money }}</td>
         </tr>
       {% else %}
         <tr><td colspan="5" class="muted">No accounts yet. Create one or capture a lead via Telegram.</td></tr>

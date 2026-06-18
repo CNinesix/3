@@ -20,14 +20,14 @@
   <div class="card">
     <div class="section-title"><h2>Opportunities</h2></div>
     <div class="table-wrap">
-      <table>
+      <table class="stack">
         <thead><tr><th>Title</th><th>Stage</th><th class="right">Value</th></tr></thead>
         <tbody>
         {% for o in account.opportunities %}
           <tr>
-            <td><a href="{{ url_for('web.opportunity_detail', opp_id=o.id) }}">{{ o.title }}</a>{% if o.is_hot %} <span class="hot-tag">HOT</span>{% endif %}</td>
-            <td><span class="badge badge-{{ o.stage }}">{{ o.stage }}</span></td>
-            <td class="right">{{ o.value|money(o.currency) }}</td>
+            <td data-label="Title"><a href="{{ url_for('web.opportunity_detail', opp_id=o.id) }}">{{ o.title }}</a>{% if o.is_hot %} <span class="hot-tag">HOT</span>{% endif %}</td>
+            <td data-label="Stage"><span class="badge badge-{{ o.stage }}">{{ o.stage }}</span></td>
+            <td data-label="Value" class="right">{{ o.value|money(o.currency) }}</td>
           </tr>
         {% else %}<tr><td colspan="3" class="muted">No opportunities yet.</td></tr>{% endfor %}
         </tbody>
