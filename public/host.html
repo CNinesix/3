@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Share screen — WebView Remote</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <h1>Share this screen</h1>
+      <a class="back" href="index.html">← back</a>
+      <span id="status" class="status">idle</span>
+    </div>
+
+    <div class="row">
+      <button id="startBtn">Start sharing</button>
+      <span>Session ID:</span>
+      <span id="sessionId" class="session-id">— — —</span>
+    </div>
+
+    <div class="stage">
+      <video id="preview" autoplay muted playsinline></video>
+    </div>
+
+    <p class="note">
+      Mouse/keyboard events from viewers are received over a data channel and
+      logged below. A native agent would inject them into the OS here.
+    </p>
+    <div id="log" class="log"></div>
+  </div>
+
+  <script type="module" src="host.js"></script>
+</body>
+</html>

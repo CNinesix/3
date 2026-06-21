@@ -1,0 +1,19 @@
+{
+  "name": "webview-remote",
+  "version": "0.1.0",
+  "description": "A browser-based remote desktop MVP (WebRTC) demonstrating TeamViewer-style screen sharing and remote input forwarding.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ws": "^8.18.0"
+  },
+  "license": "MIT"
+}

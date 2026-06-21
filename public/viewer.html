@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connect — WebView Remote</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <h1>Connect to a screen</h1>
+      <a class="back" href="index.html">← back</a>
+      <span id="status" class="status">idle</span>
+    </div>
+
+    <div class="row">
+      <input id="sessionInput" type="text" placeholder="Session ID" maxlength="9" />
+      <button id="joinBtn">Connect</button>
+      <label class="row" style="gap:6px;">
+        <input type="checkbox" id="controlToggle" checked /> send my input
+      </label>
+    </div>
+
+    <div class="stage">
+      <video id="remote" autoplay playsinline tabindex="0"></video>
+    </div>
+
+    <div id="log" class="log"></div>
+  </div>
+
+  <script type="module" src="viewer.js"></script>
+</body>
+</html>
