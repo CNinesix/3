@@ -1,10 +1,11 @@
 # WebView Remote
 
 A browser-based remote-desktop **MVP** built over WebRTC. It demonstrates the
-core mechanics behind tools like TeamViewer — session IDs, live screen
-streaming, and remote input forwarding — without any native install.
+core mechanics behind low-latency remote-play tools like **Parsec** — session
+IDs, live screen streaming, gamepad/keyboard/mouse passthrough, and per-session
+quality controls — without any native install.
 
-> This is a learning/starter scaffold, **not** a TeamViewer clone. See
+> This is a learning/starter scaffold, **not** a Parsec clone. See
 > [Scope & honest limits](#scope--honest-limits) below.
 
 ## What works today
@@ -13,8 +14,12 @@ streaming, and remote input forwarding — without any native install.
 - **Live screen sharing** — the host's screen is captured with
   `getDisplayMedia` and streamed peer-to-peer over WebRTC.
 - **Multiple viewers** — each viewer gets its own peer connection.
-- **Remote input forwarding** — viewers send mouse/keyboard events to the host
-  over a data channel (normalized 0..1 coordinates).
+- **Input forwarding** — viewers send mouse/keyboard **and gamepad** events to
+  the host over a data channel (normalized coordinates; gamepad deltas only).
+- **Quality controls** — the host caps **max FPS (30/60/120)** and **bitrate**
+  per session via `RTCRtpSender` encodings, applied live to all viewers.
+- **Live latency stats** — the viewer shows real-time **RTT, FPS, bitrate,
+  jitter, and resolution** from `getStats()`.
 - **Signaling server** — relays SDP/ICE only; never sees pixels or input.
 
 ## Run it
@@ -51,22 +56,25 @@ Host browser  ──WebRTC media──▶  Viewer browser
 
 ## Scope & honest limits
 
-This MVP covers the *transport and UX* of remote desktop. Reaching real
-TeamViewer parity requires substantially more:
+This MVP covers the *transport, input model, and UX* of remote play. Reaching
+real **Parsec** parity requires substantially more:
 
 - **OS-level input injection** — browsers are sandboxed and cannot move the
-  real cursor or type into other apps. The host currently *logs* received
-  input. A native agent (Electron/Tauri + e.g. `nut.js`, or a Rust/C++ agent)
-  is needed to inject events into the operating system.
-- **Unattended access** — installed background service, device list, auth.
+  real cursor, type, or emulate a controller in other apps. The host currently
+  *logs* received input. A native agent is needed: e.g. `nut.js` (Electron/
+  Tauri) for keyboard/mouse and **ViGEm** for virtual gamepads on Windows.
+- **Hardware encode for true low latency** — Parsec's edge is a
+  hardware-accelerated capture→encode pipeline (NVENC/AMF/QuickSync) plus a
+  UDP transport tuned over years. Browser WebRTC gets *close* but not there.
 - **Reliable connectivity** — self-hosted/global TURN relays for any-firewall
   connections.
 - **Security** — end-to-end encryption posture, code signing, anti-abuse,
   permission prompts, audit logging.
-- **Extras** — file transfer, clipboard sync, multi-monitor, session
-  recording, chat, mobile clients.
+- **Extras** — multi-monitor, HDR, audio passthrough, host-side cursor capture.
 
-See the roadmap discussion in the PR/branch for how these phases stack up.
+For a production-grade open-source path, look at **Sunshine** (host) +
+**Moonlight** (client), which already implement hardware encode and low-latency
+gamepad streaming.
 
 ## License
 

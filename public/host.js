@@ -8,6 +8,8 @@ const startBtn = document.getElementById('startBtn');
 const sessionIdEl = document.getElementById('sessionId');
 const statusEl = document.getElementById('status');
 const preview = document.getElementById('preview');
+const fpsSelect = document.getElementById('fpsSelect');
+const bitrateSelect = document.getElementById('bitrateSelect');
 const log = makeLogger(document.getElementById('log'));
 
 let ws;
@@ -22,7 +24,7 @@ function setStatus(text, cls = '') {
 startBtn.addEventListener('click', async () => {
   try {
     localStream = await navigator.mediaDevices.getDisplayMedia({
-      video: { frameRate: 30 },
+      video: { frameRate: { ideal: Number(fpsSelect.value) } },
       audio: false,
     });
   } catch (err) {
@@ -83,6 +85,9 @@ async function createPeer(viewerId) {
 
   for (const track of localStream.getTracks()) pc.addTrack(track, localStream);
 
+  // Apply the current quality settings to this viewer's video sender.
+  await applyQuality(pc);
+
   // Receive remote input from this viewer.
   pc.ondatachannel = (e) => {
     const ch = e.channel;
@@ -114,9 +119,33 @@ async function handlePeerSignal(viewerId, signal) {
   }
 }
 
+// Push the selected max-bitrate / framerate to a peer's video sender.
+// maxBitrate/maxFramerate in RTCRtpSender encodings let the encoder cap
+// bandwidth — the latency/quality knobs Parsec exposes per session.
+async function applyQuality(pc) {
+  const sender = pc.getSenders().find((s) => s.track?.kind === 'video');
+  if (!sender) return;
+  const params = sender.getParameters();
+  if (!params.encodings || !params.encodings.length) params.encodings = [{}];
+  params.encodings[0].maxBitrate = Number(bitrateSelect.value) * 1_000_000;
+  params.encodings[0].maxFramerate = Number(fpsSelect.value);
+  try {
+    await sender.setParameters(params);
+  } catch (err) {
+    log('Could not apply quality: ' + err.message);
+  }
+}
+
+// Re-apply quality to all active peers when the host changes a setting.
+function applyQualityToAll() {
+  for (const pc of peers.values()) applyQuality(pc);
+}
+fpsSelect.addEventListener('change', applyQualityToAll);
+bitrateSelect.addEventListener('change', applyQualityToAll);
+
 // In the browser sandbox we can only display received input. A native host
-// agent would translate these into real OS-level mouse/keyboard events.
+// agent would translate these into real OS-level mouse/keyboard/gamepad events.
 function handleRemoteInput(viewerId, input) {
-  if (input.type === 'mousemove') return; // too noisy to log every move
+  if (input.type === 'mousemove' || input.type === 'gamepad-axis') return; // too noisy
   log(`input from ${viewerId}: ${input.type} ${JSON.stringify(input).slice(0, 80)}`);
 }

@@ -117,12 +117,29 @@ input[type="text"] {
 .status.err { color: var(--bad); border-color: var(--bad); }
 
 .stage {
+  position: relative;
   background: #000;
   border: 1px solid var(--border);
   border-radius: 12px;
   overflow: hidden;
   margin-top: 12px;
 }
+
+.stats {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  gap: 14px;
+  background: rgba(13, 17, 23, .72);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: ui-monospace, monospace;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.stats b { color: var(--good); font-weight: 600; }
 video { width: 100%; display: block; background: #000; }
 
 .log {

@@ -20,6 +20,26 @@
       <span id="sessionId" class="session-id">— — —</span>
     </div>
 
+    <div class="row" style="margin-top:12px;">
+      <label class="row" style="gap:6px;">
+        Max FPS
+        <select id="fpsSelect">
+          <option>30</option>
+          <option selected>60</option>
+          <option>120</option>
+        </select>
+      </label>
+      <label class="row" style="gap:6px;">
+        Bitrate
+        <select id="bitrateSelect">
+          <option value="2">2 Mb/s</option>
+          <option value="5" selected>5 Mb/s</option>
+          <option value="10">10 Mb/s</option>
+          <option value="20">20 Mb/s</option>
+        </select>
+      </label>
+    </div>
+
     <div class="stage">
       <video id="preview" autoplay muted playsinline></video>
     </div>

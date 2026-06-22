@@ -20,12 +20,24 @@
       <label class="row" style="gap:6px;">
         <input type="checkbox" id="controlToggle" checked /> send my input
       </label>
+      <span id="gamepadStatus" class="status">no gamepad</span>
     </div>
 
     <div class="stage">
       <video id="remote" autoplay playsinline tabindex="0"></video>
+      <div id="stats" class="stats hidden">
+        <span><b id="statRtt">—</b> ms rtt</span>
+        <span><b id="statFps">—</b> fps</span>
+        <span><b id="statBitrate">—</b> Mb/s</span>
+        <span><b id="statJitter">—</b> ms jitter</span>
+        <span><b id="statRes">—</b></span>
+      </div>
     </div>
 
+    <p class="note">
+      Click the video to capture keyboard/mouse. Connect a controller and press
+      a button to enable gamepad passthrough (Parsec-style).
+    </p>
     <div id="log" class="log"></div>
   </div>
 
