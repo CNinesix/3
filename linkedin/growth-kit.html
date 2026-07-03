@@ -1,0 +1,451 @@
+<title>LinkedIn Growth Kit — A2 Automation</title>
+<style>
+  :root {
+    --paper: #f5f7fa;
+    --card: #ffffff;
+    --ink: #121821;
+    --ink-soft: #47535f;
+    --ink-faint: #6b7885;
+    --line: #dde3ea;
+    --line-soft: #e9eef3;
+    --accent: #1560d4;        /* signal blue — networks, connection */
+    --accent-ink: #0d47a3;
+    --accent-wash: #e8f0fd;
+    --power: #d9822b;         /* amber — critical power / Vertiv */
+    --power-wash: #fbeeda;
+    --good: #1f9d5b;
+    --shadow: 0 1px 2px rgba(18,24,33,.06), 0 6px 20px rgba(18,24,33,.05);
+    --radius: 12px;
+    --maxw: 860px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0d1219;
+      --card: #141b24;
+      --ink: #eaf0f6;
+      --ink-soft: #a7b4c1;
+      --ink-faint: #7c8a98;
+      --line: #26313d;
+      --line-soft: #1e2732;
+      --accent: #5b9bff;
+      --accent-ink: #a9caff;
+      --accent-wash: #16233a;
+      --power: #e6a24d;
+      --power-wash: #2e2313;
+      --good: #45c17f;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0d1219; --card: #141b24; --ink: #eaf0f6; --ink-soft: #a7b4c1;
+    --ink-faint: #7c8a98; --line: #26313d; --line-soft: #1e2732; --accent: #5b9bff;
+    --accent-ink: #a9caff; --accent-wash: #16233a; --power: #e6a24d;
+    --power-wash: #2e2313; --good: #45c17f;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
+  }
+  :root[data-theme="light"] {
+    --paper: #f5f7fa; --card: #ffffff; --ink: #121821; --ink-soft: #47535f;
+    --ink-faint: #6b7885; --line: #dde3ea; --line-soft: #e9eef3; --accent: #1560d4;
+    --accent-ink: #0d47a3; --accent-wash: #e8f0fd; --power: #d9822b;
+    --power-wash: #fbeeda; --good: #1f9d5b;
+    --shadow: 0 1px 2px rgba(18,24,33,.06), 0 6px 20px rgba(18,24,33,.05);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.6; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
+
+  /* Header */
+  header.top {
+    background: linear-gradient(160deg, var(--accent-ink), var(--accent) 70%);
+    color: #fff; padding: 40px 0 34px;
+    border-bottom: 3px solid var(--power);
+  }
+  :root[data-theme="dark"] header.top,
+  @media (prefers-color-scheme: dark) { }
+  .eyebrow {
+    text-transform: uppercase; letter-spacing: .14em; font-size: .72rem;
+    font-weight: 700; opacity: .85; margin: 0 0 10px;
+  }
+  header.top h1 {
+    margin: 0; font-size: clamp(1.7rem, 5vw, 2.5rem); line-height: 1.12;
+    font-weight: 800; text-wrap: balance; letter-spacing: -.01em;
+  }
+  header.top p.sub { margin: 12px 0 0; font-size: 1.02rem; max-width: 52ch; opacity: .95; }
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 18px; }
+  .chip {
+    font-size: .74rem; font-weight: 600; padding: 4px 10px; border-radius: 999px;
+    background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.25);
+  }
+
+  /* Sticky nav */
+  nav.toc {
+    position: sticky; top: 0; z-index: 20; background: var(--card);
+    border-bottom: 1px solid var(--line); box-shadow: var(--shadow);
+  }
+  nav.toc .wrap { display: flex; gap: 4px; overflow-x: auto; padding: 8px 20px; }
+  nav.toc a {
+    white-space: nowrap; text-decoration: none; color: var(--ink-soft);
+    font-size: .84rem; font-weight: 600; padding: 7px 12px; border-radius: 8px;
+  }
+  nav.toc a:hover { background: var(--accent-wash); color: var(--accent-ink); }
+
+  main { padding: 34px 0 60px; }
+  section { margin-bottom: 46px; scroll-margin-top: 64px; }
+  .sec-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+  .sec-num {
+    font-size: .78rem; font-weight: 800; color: var(--accent);
+    font-variant-numeric: tabular-nums; letter-spacing: .05em;
+  }
+  h2 { margin: 0; font-size: 1.5rem; font-weight: 800; letter-spacing: -.01em; text-wrap: balance; }
+  .sec-intro { color: var(--ink-soft); margin: 6px 0 20px; max-width: 60ch; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 18px 18px 16px; box-shadow: var(--shadow); margin-bottom: 14px;
+  }
+  .card h3 { margin: 0 0 4px; font-size: 1.02rem; font-weight: 700; }
+  .card .meta { font-size: .78rem; color: var(--ink-faint); margin: 0 0 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: .06em; }
+  .tag {
+    display: inline-block; font-size: .68rem; font-weight: 700; padding: 2px 8px;
+    border-radius: 6px; background: var(--accent-wash); color: var(--accent-ink);
+    text-transform: uppercase; letter-spacing: .05em; margin-right: 6px;
+  }
+  .tag.power { background: var(--power-wash); color: var(--power); }
+
+  /* Copyable snippet */
+  .snippet { position: relative; }
+  .snippet-body {
+    background: var(--paper); border: 1px solid var(--line-soft); border-radius: 9px;
+    padding: 14px 14px; white-space: pre-wrap; font-size: .9rem; line-height: 1.55;
+    color: var(--ink); margin: 0;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  .copy-btn {
+    position: absolute; top: 9px; right: 9px; border: 1px solid var(--line);
+    background: var(--card); color: var(--ink-soft); font-size: .74rem; font-weight: 700;
+    padding: 5px 11px; border-radius: 7px; cursor: pointer; transition: all .15s;
+  }
+  .copy-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .copy-btn.done { background: var(--good); color: #fff; border-color: var(--good); }
+  .copy-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  ul.clean { margin: 8px 0 0; padding-left: 20px; }
+  ul.clean li { margin: 5px 0; }
+  .lead { font-weight: 600; }
+  .callout {
+    border-left: 3px solid var(--power); background: var(--power-wash);
+    padding: 12px 15px; border-radius: 0 9px 9px 0; margin: 14px 0; font-size: .92rem;
+  }
+  .callout.blue { border-left-color: var(--accent); background: var(--accent-wash); }
+
+  /* Steps */
+  ol.steps { list-style: none; counter-reset: s; padding: 0; margin: 0; display: grid; gap: 12px; }
+  ol.steps > li {
+    counter-increment: s; position: relative; padding: 14px 16px 14px 56px;
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  ol.steps > li::before {
+    content: counter(s); position: absolute; left: 14px; top: 14px;
+    width: 28px; height: 28px; border-radius: 8px; background: var(--accent); color: #fff;
+    display: grid; place-items: center; font-weight: 800; font-size: .9rem;
+  }
+  ol.steps b { color: var(--ink); }
+  code.inline {
+    background: var(--accent-wash); color: var(--accent-ink); padding: 2px 7px;
+    border-radius: 6px; font-family: ui-monospace, Menlo, monospace; font-size: .86rem; font-weight: 600;
+  }
+
+  /* Pricing table */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+  th, td { text-align: left; padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-faint); }
+  td .yes { color: var(--good); font-weight: 700; }
+
+  footer { border-top: 1px solid var(--line); padding: 22px 0 40px; color: var(--ink-faint); font-size: .85rem; }
+
+  @media (max-width: 560px) {
+    .copy-btn { position: static; display: block; margin: 0 0 8px auto; }
+    .snippet-body { padding-top: 12px; }
+  }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <p class="eyebrow">Business Development Toolkit</p>
+    <h1>Win more ICT &amp; ELV projects on LinkedIn</h1>
+    <p class="sub">A manual-first system for A2 Automation Sdn Bhd — profile, content, and outreach tuned for Johor's data-centre, developer, and facilities buyers.</p>
+    <div class="chips">
+      <span class="chip">ICT &amp; ELV</span>
+      <span class="chip">Building Management</span>
+      <span class="chip">Vertiv / Liebert Power</span>
+      <span class="chip">Axis CCTV</span>
+      <span class="chip">Johor</span>
+    </div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#profile">Profile</a>
+    <a href="#search">Find buyers</a>
+    <a href="#outreach">Outreach scripts</a>
+    <a href="#posts">Ready posts</a>
+    <a href="#pay">Free vs paid</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- PROFILE -->
+  <section id="profile">
+    <div class="sec-head"><span class="sec-num">01</span><h2>Fix your profile first</h2></div>
+    <p class="sec-intro">Before you message anyone, make your profile a lead magnet. When a buyer clicks your name, they should understand what you solve in five seconds. Tap <b>Copy</b>, paste into LinkedIn, and swap the bracketed bits for your real numbers.</p>
+
+    <div class="card">
+      <h3>Headline <span class="tag">recommended</span></h3>
+      <p class="meta">Goes right under your name — your most-seen line</p>
+      <div class="snippet">
+        <button class="copy-btn">Copy</button>
+        <pre class="snippet-body">Senior Development Manager @ A2 Automation | Helping developers, consultants &amp; data centres deliver reliable ICT, ELV, BMS, UPS (Vertiv/Liebert) &amp; Axis CCTV — on spec, on time.</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>About section</h3>
+      <p class="meta">Your pitch — first person, scannable, ends with a call to action</p>
+      <div class="snippet">
+        <button class="copy-btn">Copy</button>
+        <pre class="snippet-body">Every building and data centre runs on systems most people never see — the cabling, the surveillance, the power that must never fail, the controls that keep it all talking. When those systems are designed well, nobody notices. When they're not, everyone does.
+
+That's the problem I solve.
+
+At A2 Automation Sdn Bhd, I lead integrated ICT &amp; ELV projects for property developers, M&amp;E consultants, main contractors, data-centre operators and facilities teams across Malaysia. We design, supply, install and commission:
+
+• ICT infrastructure — structured cabling, networks, data centre / server rooms
+• ELV systems — IP surveillance (Axis), access control, public address, MATV
+• Building Management Systems — integration, monitoring, controls
+• Critical Power &amp; Cooling — UPS and precision cooling (Vertiv / Liebert)
+
+What clients get working with us:
+✔ One accountable partner across ICT + ELV + power — fewer gaps between trades
+✔ Certified, brand-backed solutions — not the cheapest box, the right one
+✔ Delivery discipline — designs that pass inspection and commissioning first time
+
+[Add a proof point: e.g. "Delivered ELV &amp; BMS for 20+ commercial buildings."]
+
+If you're planning a building, data centre, or upgrade and want the ICT/ELV/power side handled by people who've done it before — let's talk.
+
+📩 [email] | 📞 [phone] | 🌐 [website]</pre>
+      </div>
+    </div>
+
+    <div class="callout blue"><b>Also do:</b> add a banner with your Vertiv &amp; Axis partner logos, set a custom URL, turn on “Providing services,” and ask 3–5 clients for recommendations.</div>
+  </section>
+
+  <!-- SEARCH -->
+  <section id="search">
+    <div class="sec-head"><span class="sec-num">02</span><h2>Find the right buyers in Johor</h2></div>
+    <p class="sec-intro">Use LinkedIn's own search — free, safe, allowed. Don't just hunt “IT Manager”: for ELV, power and CCTV, the budget usually sits with facilities, project and M&amp;E people.</p>
+
+    <ol class="steps">
+      <li>In the top <b>search bar</b>, type <code class="inline">IT Manager Johor</code> and press Enter.</li>
+      <li>Click <b>People</b> in the row of buttons below the search bar.</li>
+      <li>Click <b>All filters</b> → set <b>Locations</b> (Johor Bahru, Iskandar Puteri, Kulai), <b>Connections</b> = 2nd, <b>Industry</b> (Construction, Real Estate, IT Services, Manufacturing) → <b>Show results</b>.</li>
+      <li>Run more titles — your best buyers — one at a time (copy below).</li>
+      <li>Turn on <b>Create search alert</b> so LinkedIn notifies you of new matches.</li>
+      <li>For each good person: open profile → <b>Connect</b> → <b>Add a note</b> → paste a script from section 3. Cap at ~10–15/day.</li>
+    </ol>
+
+    <div class="card" style="margin-top:16px">
+      <h3>Search terms to run</h3>
+      <p class="meta">Paste each into the search bar, then filter to Johor</p>
+      <div class="snippet">
+        <button class="copy-btn">Copy</button>
+        <pre class="snippet-body">Facilities Manager Johor
+Data Centre Manager Johor
+Project Director Johor construction
+M&amp;E Engineer Johor
+Head of Engineering Johor
+Building Manager Johor
+Operations Manager Johor manufacturing
+IT Manager Johor
+ICT Manager Johor</pre>
+      </div>
+    </div>
+    <div class="callout"><b>Where the money is in Johor:</b> the data-centre boom (Sedenak / Kulai), Iskandar developments, and Pasir Gudang / Senai factories all need exactly what A2 sells. Lead with those.</div>
+  </section>
+
+  <!-- OUTREACH -->
+  <section id="outreach">
+    <div class="sec-head"><span class="sec-num">03</span><h2>Outreach scripts</h2></div>
+    <p class="sec-intro">The sequence that works: <b>connect (no pitch) → give value → soft ask → follow up</b>. Always personalise the first line. Send manually — never use auto-tools.</p>
+
+    <div class="card">
+      <h3>Connection request — M&amp;E Consultant</h3>
+      <p class="meta"><span class="tag">Step 1 · no pitch</span></p>
+      <div class="snippet"><button class="copy-btn">Copy</button><pre class="snippet-body">Hi [Name], I work on the ICT/ELV &amp; critical-power side of building projects at A2 Automation. Always keen to connect with consultants shaping how buildings get specified. Would be good to be connected.</pre></div>
+    </div>
+
+    <div class="card">
+      <h3>Connection request — Developer / Project Director</h3>
+      <p class="meta"><span class="tag">Step 1 · no pitch</span></p>
+      <div class="snippet"><button class="copy-btn">Copy</button><pre class="snippet-body">Hi [Name], I lead ICT/ELV &amp; building-systems delivery at A2 Automation here in Malaysia. I follow developers doing interesting work — [their project] caught my eye. Happy to connect.</pre></div>
+    </div>
+
+    <div class="card">
+      <h3>Connection request — Data-Centre / Facilities Manager</h3>
+      <p class="meta"><span class="tag power">Step 1 · no pitch</span></p>
+      <div class="snippet"><button class="copy-btn">Copy</button><pre class="snippet-body">Hi [Name], I work with data-centre and facilities teams on critical power/cooling (Vertiv/Liebert) and surveillance (Axis) at A2 Automation. Would be glad to connect with someone in your field.</pre></div>
+    </div>
+
+    <div class="card">
+      <h3>After they accept — value first</h3>
+      <p class="meta"><span class="tag">Step 2 · within 24h</span></p>
+      <div class="snippet"><button class="copy-btn">Copy</button><pre class="snippet-body">Thanks for connecting, [Name]! No pitch from me — I mostly share practical stuff on ICT/ELV, building systems and critical power on here.
+
+Out of curiosity, what kind of projects is [company] focused on this year? Always interested in what people in [their field] are working on.</pre></div>
+    </div>
+
+    <div class="card">
+      <h3>Soft ask — when there's a real trigger</h3>
+      <p class="meta"><span class="tag">Step 3 · after 1–2 value touches</span></p>
+      <div class="snippet"><button class="copy-btn">Copy</button><pre class="snippet-body">Hi [Name], saw [trigger — new development / your post on X]. On projects like that, the ICT/ELV + power side is usually where timelines and budgets get tested.
+
+We do exactly that at A2 Automation — integrated cabling, CCTV (Axis), BMS and critical power (Vertiv/Liebert), one accountable partner instead of five vendors.
+
+Worth a quick 15-min call to see if we'd be useful on anything you've got coming up?</pre></div>
+    </div>
+
+    <div class="card">
+      <h3>Follow-up — gracious final nudge</h3>
+      <p class="meta"><span class="tag">Step 4 · ~2 weeks later</span></p>
+      <div class="snippet"><button class="copy-btn">Copy</button><pre class="snippet-body">Hi [Name], I'll leave it here so I'm not a nuisance 🙂. If ICT/ELV, CCTV, BMS or critical power ever lands on your desk, I'm a message away. Wishing you a strong quarter!</pre></div>
+    </div>
+  </section>
+
+  <!-- POSTS -->
+  <section id="posts">
+    <div class="sec-head"><span class="sec-num">04</span><h2>Ready-to-post content</h2></div>
+    <p class="sec-intro">Post 3× a week. The first two lines decide who clicks “see more,” so they're built to hook. End every post by replying to comments in the first hour — that's what spreads reach.</p>
+
+    <div class="card">
+      <h3>Educational — the ELV budget leak</h3>
+      <p class="meta"><span class="tag">Teach · builds authority</span></p>
+      <div class="snippet"><button class="copy-btn">Copy</button><pre class="snippet-body">ELV is where most building budgets quietly leak money. Here's why.
+
+"ELV" covers the systems owners underestimate: CCTV, access control, cabling, PA, BMS integration. They get value-engineered late in the project — and that's exactly when it goes wrong:
+
+• Cabling undersized for future bandwidth → rip-and-replace in 3 years
+• CCTV specced on price, not coverage → blind spots you find after an incident
+• BMS bolted on instead of designed in → systems that don't talk to each other
+
+The cheapest ELV package is almost never the cheapest building.
+
+What's the worst ELV shortcut you've seen come back to bite a project?</pre></div>
+    </div>
+
+    <div class="card">
+      <h3>Proof — critical power case study</h3>
+      <p class="meta"><span class="tag power">Show results · builds trust</span></p>
+      <div class="snippet"><button class="copy-btn">Copy</button><pre class="snippet-body">A data centre can survive almost anything — except losing power for 8 milliseconds.
+
+We recently delivered the critical-power layer for a [client type] site using Vertiv/Liebert UPS and precision cooling. The brief was simple to say, hard to do: zero downtime, zero thermal excursions.
+
+What made it work wasn't the brand on the box — it was:
+• Right-sizing the load, not over-selling capacity
+• Redundancy that matches the actual risk tier
+• Commissioning that tests failure, not just switch-on
+
+[Add a real metric: uptime %, load kVA, cooling redundancy.]
+
+Planning a server room or data-centre upgrade? The power/cooling design decides everything else. Happy to share what we've learned.</pre></div>
+    </div>
+
+    <div class="card">
+      <h3>Opinion — cheapest quote, priciest build</h3>
+      <p class="meta"><span class="tag">Take a stance · builds personality</span></p>
+      <div class="snippet"><button class="copy-btn">Copy</button><pre class="snippet-body">Unpopular opinion: the "cheapest quote" is the most expensive way to build.
+
+In ICT &amp; ELV tenders, the lowest number wins too often — then the variation orders start:
+→ Undersized cabling = future rework
+→ No integration plan = systems that don't talk
+→ No commissioning discipline = defects at handover
+
+Value engineering isn't "buy cheaper." It's "spend where failure is expensive." A good integrator saves you money in year 3, not just at award.
+
+Am I wrong? Tell me where.</pre></div>
+    </div>
+
+    <div class="card">
+      <h3>Soft CTA — taking on new projects</h3>
+      <p class="meta"><span class="tag">Invite · generates leads</span></p>
+      <div class="snippet"><button class="copy-btn">Copy</button><pre class="snippet-body">We're taking on new ICT/ELV projects this quarter. Here's who we're a fit for.
+
+A2 Automation is a systems integrator — one accountable partner across:
+• Structured cabling &amp; networks
+• IP surveillance (Axis) &amp; access control
+• Building Management Systems
+• Critical power &amp; cooling (Vertiv/Liebert)
+
+We're a strong fit if you're a developer, consultant, contractor or facilities team who wants these done right the first time — not stitched across five vendors.
+
+If that's a project you're planning, DM me or comment "info" and I'll reach out.</pre></div>
+    </div>
+
+    <div class="callout">Two rules that matter most: <b>no links in the post body</b> (LinkedIn buries them — put links in the first comment), and <b>reply to every comment within the first hour</b>.</div>
+  </section>
+
+  <!-- PAY -->
+  <section id="pay">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Do you need to pay?</h2></div>
+    <p class="sec-intro">No — start free. Free LinkedIn covers about 90% of this. Only pay once it's proven it brings you conversations.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Phase</th><th>Tool</th><th>What it gives</th><th>Cost</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><b>Weeks 1–4</b><br>Learn the routine</td>
+            <td>Free LinkedIn</td>
+            <td><span class="yes">✔</span> Search by title + location<br><span class="yes">✔</span> Connect with notes<br><span class="yes">✔</span> Message connections &amp; post</td>
+            <td><b>RM 0</b></td>
+          </tr>
+          <tr>
+            <td><b>Month 2+</b><br>If it's working &amp; you hit limits</td>
+            <td>Sales Navigator</td>
+            <td><span class="yes">✔</span> Unlimited search (no monthly cap)<br><span class="yes">✔</span> Advanced Johor / seniority / company-growth filters<br><span class="yes">✔</span> Lead lists + alerts</td>
+            <td>~RM 380/mo<br><em>free 1-mo trial</em></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout blue"><b>The one catch on free:</b> a monthly “commercial use limit” caps heavy searching (resets on the 1st). For ~10–20 searches a day, most people never hit it. Start the Sales Navigator <b>trial</b> only once you're hitting the cap and getting replies.</div>
+  </section>
+
+  <footer>
+    Built for A2 Automation Sdn Bhd · Senior Development Manager · Johor, Malaysia<br>
+    Manual, rules-compliant outreach only — no scraping, no automation bots. Protects your account and your reputation.
+  </footer>
+</main>
+
+<script>
+  document.querySelectorAll('.copy-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var body = btn.parentElement.querySelector('.snippet-body');
+      var text = body ? body.innerText : '';
+      navigator.clipboard.writeText(text).then(function () {
+        var old = btn.textContent;
+        btn.textContent = 'Copied ✓';
+        btn.classList.add('done');
+        setTimeout(function () { btn.textContent = old; btn.classList.remove('done'); }, 1600);
+      });
+    });
+  });
+</script>
