@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code — Chat &amp; Image Reply Flow</title>
+<style>
+  :root {
+    --paper:#f3f4f7; --card:#fff; --ink:#1b2130; --ink-soft:#55607a;
+    --line:#d9dde6; --accent:#0e7c6b; --accent-2:#c25a1c;
+    --accent-soft:#e4f1ee; --accent-2-soft:#f7e9dd;
+    --shadow:0 1px 2px rgba(27,33,48,.05),0 8px 24px rgba(27,33,48,.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{--paper:#12151c;--card:#1a1e28;--ink:#eef1f6;--ink-soft:#9aa4bc;
+      --line:#2b3140;--accent:#3fbfa6;--accent-2:#e08a4e;
+      --accent-soft:#16302b;--accent-2-soft:#33251a;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.35);}
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:860px;margin:0 auto;padding:56px 24px 96px;}
+  .eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);font-weight:700;margin:0 0 12px;}
+  h1{font-size:clamp(28px,5vw,42px);line-height:1.1;margin:0 0 14px;
+    letter-spacing:-.02em;font-weight:800;}
+  .lede{font-size:18px;color:var(--ink-soft);max-width:60ch;margin:0;}
+  section{margin-top:44px;}
+  h2{font-size:22px;margin:0 0 6px;font-weight:750;display:flex;align-items:baseline;gap:10px;}
+  h2 .num{font-size:13px;font-weight:700;color:var(--card);background:var(--ink);
+    border-radius:6px;padding:2px 8px;transform:translateY(-2px);}
+  .sub{color:var(--ink-soft);margin:0 0 20px;max-width:62ch;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:20px;box-shadow:var(--shadow);overflow-x:auto;}
+  .mermaid{display:flex;justify-content:center;min-width:0;}
+  .legend{display:flex;flex-wrap:wrap;gap:18px;margin:18px 0 0;font-size:14px;}
+  .legend span{display:inline-flex;align-items:center;gap:8px;color:var(--ink-soft);}
+  .dot{width:12px;height:12px;border-radius:4px;flex:none;}
+  .dot.chat{background:var(--accent);}.dot.img{background:var(--accent-2);}
+  .dot.tool{background:var(--ink-soft);}
+  .steps{display:grid;gap:14px;margin-top:6px;}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:16px 18px;display:grid;grid-template-columns:40px 1fr;gap:14px;align-items:start;}
+  .step .k{width:34px;height:34px;border-radius:9px;font-weight:800;font-size:15px;
+    display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);}
+  .step.i .k{background:var(--accent-2-soft);color:var(--accent-2);}
+  .step h3{margin:2px 0 4px;font-size:16px;}
+  .step p{margin:0;color:var(--ink-soft);font-size:15px;}
+  .callout{margin-top:44px;background:var(--accent-soft);border:1px solid var(--line);
+    border-left:4px solid var(--accent);border-radius:12px;padding:18px 20px;}
+  .callout h3{margin:0 0 6px;font-size:16px;}.callout p{margin:0;color:var(--ink-soft);font-size:15px;}
+  footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);
+    color:var(--ink-soft);font-size:13px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Claude Code · How it works</p>
+    <h1>From your message to Claude&nbsp;Code&#39;s reply</h1>
+    <p class="lede">A simple map of what happens after you send a chat message — with or without images.</p>
+  </header>
+
+  <section>
+    <h2><span class="num">1</span> The whole picture</h2>
+    <p class="sub">Everything you send arrives as one message. Claude reads it, thinks, sometimes uses tools, then writes back. It can loop through tools many times before the final reply.</p>
+    <div class="card"><pre class="mermaid">
+flowchart TD
+    A([You type a message]) --> B{Any images attached?}
+    B -- text only --> C[Claude reads the text]
+    B -- text + image --> D[Claude reads text + looks at image]
+    C --> E[Claude thinks: what is being asked?]
+    D --> E
+    E --> F{Need to act on your project?}
+    F -- yes --> G[Use a tool: read file, run command, search, edit]
+    G --> H[Tool sends back a result]
+    H --> E
+    F -- no --> I([Claude writes the reply])
+    </pre></div>
+    <div class="legend">
+      <span><i class="dot chat"></i> Start &amp; final reply</span>
+      <span><i class="dot img"></i> Image step</span>
+      <span><i class="dot tool"></i> Tool use (loops)</span>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">2</span> The chat path</h2>
+    <p class="sub">When you send only words, this is the road the message travels.</p>
+    <div class="card"><pre class="mermaid">
+flowchart LR
+    A([Your text]) --> B[Understand the request]
+    B --> C[Plan the steps]
+    C --> D{Enough info?}
+    D -- no --> E[Ask you a question]
+    D -- yes --> F[Do the work with tools]
+    F --> G([Reply with the result])
+    </pre></div>
+  </section>
+
+  <section>
+    <h2><span class="num">3</span> The image path</h2>
+    <p class="sub">When you attach a screenshot, photo, or diagram, Claude adds a "look at it" step before thinking.</p>
+    <div class="card"><pre class="mermaid">
+flowchart LR
+    A([You attach an image]) --> B[Claude views the picture]
+    B --> C[Reads text and shapes in it]
+    C --> D[Joins it with your words]
+    D --> E[Thinks and acts]
+    E --> F([Reply])
+    </pre></div>
+  </section>
+
+  <section>
+    <h2><span class="num">4</span> The same flow, in plain words</h2>
+    <div class="steps">
+      <div class="step"><div class="k">1</div><div><h3>You send</h3><p>Your text, and any images, go to Claude together as one message.</p></div></div>
+      <div class="step i"><div class="k">2</div><div><h3>Claude looks</h3><p>It reads your words. If there is an image, it looks at the image too and reads what is inside it.</p></div></div>
+      <div class="step"><div class="k">3</div><div><h3>Claude thinks</h3><p>It works out what you actually want and makes a small plan.</p></div></div>
+      <div class="step"><div class="k">4</div><div><h3>Claude acts</h3><p>If needed, it uses tools — open a file, run a command, search the code — and can repeat this many times.</p></div></div>
+      <div class="step"><div class="k">5</div><div><h3>Claude replies</h3><p>When the work is done or a question is needed, it writes back to you.</p></div></div>
+    </div>
+  </section>
+
+  <div class="callout">
+    <h3>How this helps you</h3>
+    <p>You don&#39;t need to read every line Claude writes. Watch for two things: a <strong>question</strong> (Claude needs your answer) and the <strong>final reply</strong> (the result). Everything in between is Claude looking, thinking, and using tools.</p>
+  </div>
+
+  <footer>Reference diagram · Claude Code chat &amp; image reply flow</footer>
+</div>
+
+<script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+  const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+  mermaid.initialize({ startOnLoad: true, theme: dark ? "dark" : "default" });
+</script>
+</body>
+</html>
