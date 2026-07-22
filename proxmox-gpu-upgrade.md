@@ -19,10 +19,20 @@ For Ollama, VRAM is the deciding factor — the whole model must fit in VRAM for
 
 | Card | VRAM | Runs comfortably | Notes |
 |---|---|---|---|
-| RTX 4060 Ti 16GB | 16 GB | 7B–14B Q4/Q5, 24B tight | Cheapest sane option, low power (~165 W) |
-| RTX 3090 (used) | 24 GB | up to 32B Q4 | Best value for LLMs, ~350 W, check warranty |
+| **RTX 5060 Ti 16GB** ⭐ | 16 GB GDDR7 | 7B–14B Q4/Q5, 24B tight | 448 GB/s bandwidth, 180 W, MSRP $429 (street ~$540 new / ~$460 used, Jul 2026) |
+| RTX 4060 Ti 16GB | 16 GB | 7B–14B Q4/Q5, 24B tight | Only 288 GB/s — 5060 Ti is 56% faster for same money; skip |
+| RTX 3090 (used) | 24 GB | up to 32B Q4 | Best value for 24 GB, ~350 W, check warranty |
 | RTX 4090 | 24 GB | up to 32B Q4, fastest | Expensive, ~450 W, 3.5-slot |
 | RTX 5090 | 32 GB | 70B Q2/Q3, 32B Q6 | Overkill unless going big |
+
+**RTX 5060 Ti 16GB — measured Ollama numbers (Q4_K_M):**
+
+- DeepSeek-Coder 6.7B: ~101 tok/s
+- Mistral 7B: ~90 tok/s
+- Llama 3.1 8B: ~75 tok/s
+- Llama2 13B: ~53 tok/s / 14B-class: ~51 tok/s
+
+Why it fits this host well: 180 W TDP means **no PSU upgrade needed** (single 8-pin, most cards are 2-slot), and LLM inference speed is bandwidth-bound — its GDDR7 gives it the throughput ceiling for the 7B–14B models that fit in 16 GB. The only reason to spend more is wanting 24B–32B models, which need a 24 GB card.
 
 Practical checks before buying:
 
