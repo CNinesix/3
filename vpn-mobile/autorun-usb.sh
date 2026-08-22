@@ -20,6 +20,16 @@ echo " USB auto install (th2) - mobile VPN setup"
 echo "=============================================="
 echo ""
 
+# Gate the install behind the installation code (skip with SKIP_CODE=1).
+VERIFY="$SCRIPT_DIR/../install/verify-code.sh"
+if [ "${SKIP_CODE:-0}" != "1" ] && [ -f "$VERIFY" ]; then
+  if ! sh "$VERIFY"; then
+    echo "Aborting: installation code required." >&2
+    exit 1
+  fi
+  echo ""
+fi
+
 # Detect Termux (Android) so we can give phone-specific instructions.
 IS_TERMUX=0
 if [ -n "${PREFIX:-}" ] && [ -d "/data/data/com.termux" ]; then
