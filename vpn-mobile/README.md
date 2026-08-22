@@ -29,6 +29,11 @@ From the USB (PC, or Termux on Android):
 sh vpn-mobile/autorun-usb.sh
 ```
 
+It first asks for the **installation code** (see
+[`../install/README.md`](../install/README.md)) and refuses to run without it.
+Pass it non-interactively with `INSTALL_CODE=...`, or bypass for testing with
+`SKIP_CODE=1`.
+
 That writes into `vpn-mobile/dist/`:
 
 - `mobile-vpn-servers.txt` — human-readable list (name, host, ws/wss URLs, status)
